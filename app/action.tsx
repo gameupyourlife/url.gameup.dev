@@ -56,7 +56,7 @@ export async function shortenUrl(formData: FormData) {
         const result = await pool.query(already_query)
         if(result.rows.length > 0) {
             console.log("already exists in db")
-            return "https://gameup.dev/" + result.rows[0].short_url
+            return "https://url.gameup.dev/" + result.rows[0].short_url
         }
         else {
             let isUnique = false
@@ -104,7 +104,7 @@ export async function shortenUrl(formData: FormData) {
     }
     
     const result = await pool.query(query)
-    return "https://gameup.dev/" + custom
+    return "https://url.gameup.dev/" + custom
 }
 
 

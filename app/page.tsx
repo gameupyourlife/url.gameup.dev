@@ -57,7 +57,7 @@ export default function Home() {
                 <Link
                     isExternal
                     className={buttonStyles({ variant: "bordered", radius: "full" })}
-                    href={"https://github.com/gameupyourlife"}
+                    href={"https://github.com/gameupyourlife/GU-url-shortener"}
                 >
                     <GithubIcon size={20} />
                     GitHub
