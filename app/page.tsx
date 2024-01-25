@@ -1,51 +1,69 @@
+"use client";
+
 import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { Code } from "@nextui-org/code"
 import { button as buttonStyles } from "@nextui-org/theme";
 import { siteConfig } from "@/config/site";
 import { title, subtitle } from "@/components/primitives";
 import { GithubIcon } from "@/components/icons";
+import { Input } from "@nextui-org/input";
+import { Button } from "@nextui-org/button";
+import { shortenUrl } from "./action";
+import { useRef, useState } from 'react'
+import {Snippet} from "@nextui-org/snippet";
 
 export default function Home() {
-	return (
-		<section className="flex flex-col items-center justify-center gap-4 py-8 md:py-10">
-			<div className="inline-block max-w-lg text-center justify-center">
-				<h1 className={title()}>Make&nbsp;</h1>
-				<h1 className={title({ color: "violet" })}>beautiful&nbsp;</h1>
-				<br />
-				<h1 className={title()}>
-					websites regardless of your design experience.
-				</h1>
-				<h2 className={subtitle({ class: "mt-4" })}>
-					Beautiful, fast and modern React UI library.
-				</h2>
-			</div>
+    const ref = useRef<HTMLFormElement>(null)
+    const [link, setLink] = useState("")
 
-			<div className="flex gap-3">
-				<Link
-					isExternal
-					href={siteConfig.links.docs}
-					className={buttonStyles({ color: "primary", radius: "full", variant: "shadow" })}
-				>
-					Documentation
-				</Link>
-				<Link
-					isExternal
-					className={buttonStyles({ variant: "bordered", radius: "full" })}
-					href={siteConfig.links.github}
-				>
-					<GithubIcon size={20} />
-					GitHub
-				</Link>
-			</div>
+    return (
+        <section className="flex flex-col items-center justify-center gap-4 h-full pb-20">
+            <div className="inline-block max-w-lg text-center justify-center">
+                <h1 className={title()}>Shorten your URL&nbsp;</h1>
+                <br />
+                <h1 className={title({ color: "violet" })}>fast&nbsp;</h1>
+                <h1 className={title()}>
+                    and&nbsp;
+                </h1>
+                <h1 className={title({ color: "violet" })}>easy&nbsp;</h1>
 
-			<div className="mt-8">
-				<Snippet hideSymbol hideCopyButton variant="flat">
-					<span>
-						Get started by editing <Code color="primary">app/page.tsx</Code>
-					</span>
-				</Snippet>
-			</div>
-		</section>
-	);
+            </div>
+            <form className="flex gap-3" ref={ref}
+                action={async (formData) => {
+                    let url = await shortenUrl(formData)
+                    ref.current?.reset()
+
+                    if (typeof(url) == "string") {
+                        setLink(url)
+                    }
+                }}
+            >
+                <Input
+                    isRequired
+                    type="text"
+                    label="Url"
+                    className="max-w-xs"
+                    size="sm"
+                    radius="sm"
+                    id="url"
+                    name="url"
+                />
+                <Input type="string" label="Custom Url" id="custom" name="custom" size="sm" radius="sm" />
+                <Button type="submit" color="primary" size="lg" radius="sm"     >
+                    Shorten
+                </Button>
+            </form>
+            {link.length > 1 && <Snippet>{link}</Snippet>}
+            <div className="flex gap-3">
+                <Link
+                    isExternal
+                    className={buttonStyles({ variant: "bordered", radius: "full" })}
+                    href={"https://github.com/gameupyourlife"}
+                >
+                    <GithubIcon size={20} />
+                    GitHub
+                </Link>
+            </div>
+
+        </section>
+    );
 }
