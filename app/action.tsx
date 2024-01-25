@@ -19,15 +19,20 @@ const schema = z.object({
 
 export async function shortenUrl(formData: FormData) {
     console.log("shortenUrl")
-    const validatedFields = schema.parse({
+    const validatedFields = schema.safeParse({
         url: formData.get('url'),
         custom: formData.get('custom'),
     })
 
+    if(!validatedFields.success) {
+        return {
+            errors: validatedFields.error.message
+        }
+    }
    
 
-    let custom = validatedFields.custom?.trim()
-    let url = validatedFields.url.trim()
+    let custom = validatedFields.data.custom?.trim()
+    let url = validatedFields.data.url.trim()
 
  
 
@@ -40,7 +45,7 @@ export async function shortenUrl(formData: FormData) {
 
         if(result.rows.length > 0) {
             console.log("already exists in db")
-            return "url.gameup.dev/" + result.rows[0].short_url
+            return {link: "url.gameup.dev/" + result.rows[0].short_url}
         }
         else {
             let isUnique = false
@@ -76,7 +81,7 @@ export async function shortenUrl(formData: FormData) {
     
     const result = await sql`INSERT INTO public.urls(long_url, short_url) VALUES(${url}, ${custom})`;
 
-    return "url.gameup.dev/" + custom
+    return {link: "url.gameup.dev/" + custom}
 }
 
 
