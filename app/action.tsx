@@ -40,7 +40,7 @@ export async function shortenUrl(formData: FormData) {
 
         if(result.rows.length > 0) {
             console.log("already exists in db")
-            return "https://url.gameup.dev/" + result.rows[0].short_url
+            return "url.gameup.dev/" + result.rows[0].short_url
         }
         else {
             let isUnique = false
@@ -76,7 +76,7 @@ export async function shortenUrl(formData: FormData) {
     
     const result = await sql`INSERT INTO public.urls(long_url, short_url) VALUES(${url}, ${custom})`;
 
-    return "https://url.gameup.dev/" + custom
+    return "url.gameup.dev/" + custom
 }
 
 
