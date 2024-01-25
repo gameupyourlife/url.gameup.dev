@@ -9,7 +9,7 @@ import { Input } from "@nextui-org/input";
 import { Button } from "@nextui-org/button";
 import { shortenUrl } from "./action";
 import { useRef, useState } from 'react'
-import {Snippet} from "@nextui-org/snippet";
+import { Snippet } from "@nextui-org/snippet";
 import { string } from "zod";
 
 export default function Home() {
@@ -32,24 +32,30 @@ export default function Home() {
             </div>
             <form className="flex gap-3" ref={ref}
                 action={async (formData) => {
+                    setErrorURL("")
+                    setErrorCustom("")
+
                     let res = await shortenUrl(formData)
                     ref.current?.reset()
 
-                    if(res.errors) {
-                        console.log(res.errors.toString())
-                        if(res.errors.toString().includes("Invalid URL")){
-                            setErrorURL(res.errors.toString())
-                        }
-                        else if(res.errors.toString().includes("Custom URL must be at least 6 characters long")) {
-                            setErrorCustom(res.errors.toString())
-                        }
-                        else if(res.errors.toString().includes("Custom URL must be at most 20 characters long")) {
-                            setErrorCustom(res.errors.toString())
-                        }
-                        return
+                    if (res.errors) {
+      
+                            if (res.errors.toString().includes("Invalid URL")) {
+                                setErrorURL("Invalid URL")
+                            }
+                            else if (res.errors.toString().includes("Custom URL must be at least 6 characters long")) {
+                                setErrorCustom("Custom URL must be 0 or between 6 and 20 characters long")
+                            }
+                            else if (res.errors.toString().includes("Custom URL must be at most 20 characters long")) {
+                                setErrorCustom("Custom URL must be 0 or between 6 and 20 characters long")
+                            }
+                            else if (res.errors.toString().includes("String must contain exactly 0 character(s)")) {
+                                setErrorCustom("Custom URL must be 0 or between 6 and 20 characters long")
+                            }
+                            return
                     }
 
-                    if (typeof(res.link) == "string") {
+                    if (typeof (res.link) == "string") {
                         setLink(res.link)
                     }
                 }}
@@ -63,7 +69,7 @@ export default function Home() {
                     radius="sm"
                     id="url"
                     name="url"
-                    errorMessage={errorURL} 
+                    errorMessage={errorURL}
                     isInvalid={errorURL != ""}
                 />
                 <Input type="string" label="Custom Url" id="custom" name="custom" size="sm" radius="sm" errorMessage={errorCustom} isInvalid={errorCustom != ""} />
