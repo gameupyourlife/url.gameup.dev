@@ -36,6 +36,7 @@ export default function Home() {
                     ref.current?.reset()
 
                     if(res.errors) {
+                        console.log(res.errors.toString())
                         if(res.errors.toString().includes("Invalid URL")){
                             setErrorURL(res.errors.toString())
                         }
