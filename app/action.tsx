@@ -1,20 +1,9 @@
 'use server'
 
-import { Pool } from 'pg'
-
+import { sql } from "@vercel/postgres";
 import { z } from 'zod'
 
 
-const pool = new Pool({
-    host: 'localhost',
-    user: 'postgres',
-    // database: 'public',
-    password: 'root',
-    port: 5432,
-    max: 20,
-    idleTimeoutMillis: 30000,
-    connectionTimeoutMillis: 2000,
-})
 
 const schema = z.object({
     url: z.string().includes(".", {
@@ -40,20 +29,15 @@ export async function shortenUrl(formData: FormData) {
     let custom = validatedFields.custom
     let url = validatedFields.url
 
-    let already_query = {
-        // give the query a unique name
-        text: 'SELECT short_url FROM public.urls WHERE long_url = $1',
-        values: [url],
-    }
-
-    
+ 
 
     
 
     // If no custom url is provided, generate one
     if(custom == undefined || custom.length < 1) {
         console.log("no custom")
-        const result = await pool.query(already_query)
+        const result = await sql`SELECT short_url FROM public.urls WHERE long_url=${url}`;
+
         if(result.rows.length > 0) {
             console.log("already exists in db")
             return "https://url.gameup.dev/" + result.rows[0].short_url
@@ -62,12 +46,8 @@ export async function shortenUrl(formData: FormData) {
             let isUnique = false
             while(!isUnique) {
                 custom = makeid(8)
-                let validation_query = {
-                    // give the query a unique name
-                    text: 'SELECT * FROM public.urls WHERE short_url = $1',
-                    values: [custom],
-                }
-                const result = await pool.query(validation_query)
+                const result = await sql`SELECT * FROM public.urls WHERE short_url=${custom}`;
+
                 if(result.rows.length < 1) {
                     isUnique = true
                 }
@@ -78,12 +58,8 @@ export async function shortenUrl(formData: FormData) {
     else {
         console.log("custom")
         let isUnique = false
-        let validation_query = {
-            // give the query a unique name
-            text: 'SELECT * FROM public.urls WHERE short_url = $1',
-            values: [custom],
-        }
-        const result = await pool.query(validation_query)
+        const result = await sql`SELECT * FROM public.urls WHERE short_url=${custom}`;
+
         if(result.rows.length < 1) {
             isUnique = true
         }
@@ -97,13 +73,9 @@ export async function shortenUrl(formData: FormData) {
         }
     }
 
-    let query = {
-        // give the query a unique name
-        text: 'INSERT INTO public.urls(long_url, short_url) VALUES($1, $2)',
-        values: [url, custom],
-    }
     
-    const result = await pool.query(query)
+    const result = await sql`INSERT INTO public.urls(long_url, short_url) VALUES(${url}, ${custom})`;
+
     return "https://url.gameup.dev/" + custom
 }
 
