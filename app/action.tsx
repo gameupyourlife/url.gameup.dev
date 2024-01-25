@@ -26,8 +26,8 @@ export async function shortenUrl(formData: FormData) {
 
    
 
-    let custom = validatedFields.custom
-    let url = validatedFields.url
+    let custom = validatedFields.custom?.trim()
+    let url = validatedFields.url.trim()
 
  
 
