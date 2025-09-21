@@ -30,7 +30,7 @@ export async function GET(
     }
 
     // Type the data properly
-    const { id, original_url, clicks } = urlData as {
+    const { original_url } = urlData as {
       id: string
       original_url: string
       clicks: number

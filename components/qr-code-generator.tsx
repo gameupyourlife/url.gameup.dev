@@ -8,11 +8,10 @@ import { QrCode, Download, Copy, Check } from 'lucide-react'
 import QRCode from 'qrcode'
 
 interface QRCodeGeneratorProps {
-  url: string
   shortCode: string
 }
 
-export function QRCodeGenerator({ url, shortCode }: QRCodeGeneratorProps) {
+export function QRCodeGenerator({ shortCode }: QRCodeGeneratorProps) {
   const [qrCodeDataURL, setQrCodeDataURL] = useState<string>('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -89,6 +88,7 @@ export function QRCodeGenerator({ url, shortCode }: QRCodeGeneratorProps) {
               </div>
             ) : qrCodeDataURL ? (
               <div className="relative">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={qrCodeDataURL} 
                   alt={`QR Code for ${shortCode}`}

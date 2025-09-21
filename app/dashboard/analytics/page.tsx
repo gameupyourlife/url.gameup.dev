@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase'
+import { createServerClient, Database } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,6 +14,8 @@ import {
     MousePointerClick,
     Link as LinkIcon
 } from 'lucide-react'
+
+type UrlRow = Database['public']['Tables']['urls']['Row']
 
 export default async function AnalyticsPage() {
   const supabase = await createServerClient()
@@ -56,22 +58,22 @@ export default async function AnalyticsPage() {
       .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())
   ])
 
-  const urls = urlsResponse.data || []
+  const urls = (urlsResponse.data || []) as UrlRow[]
   const totalUrls = urls.length
-  const totalClicks = urls.reduce((total, url) => total + (url as any).clicks, 0)
-  const activeUrls = urls.filter(url => (url as any).is_active).length
+  const totalClicks = urls.reduce((total, url) => total + url.clicks, 0)
+  const activeUrls = urls.filter(url => url.is_active).length
 
   // Calculate time-based stats
-  const todayClicks = (clicksToday.data || []).reduce((total, url) => total + (url as any).clicks, 0)
-  const weekClicks = (clicksThisWeek.data || []).reduce((total, url) => total + (url as any).clicks, 0)
-  const monthClicks = (clicksThisMonth.data || []).reduce((total, url) => total + (url as any).clicks, 0)
+  const todayClicks = ((clicksToday.data || []) as UrlRow[]).reduce((total, url) => total + url.clicks, 0)
+  const weekClicks = ((clicksThisWeek.data || []) as UrlRow[]).reduce((total, url) => total + url.clicks, 0)
+  const monthClicks = ((clicksThisMonth.data || []) as UrlRow[]).reduce((total, url) => total + url.clicks, 0)
 
   // Top performing URLs
   const topUrls = urls.slice(0, 5)
 
   // Recent URLs
   const recentUrls = [...urls]
-    .sort((a, b) => new Date((b as any).created_at).getTime() - new Date((a as any).created_at).getTime())
+    .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
     .slice(0, 5)
 
   return (
@@ -147,7 +149,7 @@ export default async function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {topUrls.length > 0 ? (topUrls[0] as any).clicks : 0}
+              {topUrls.length > 0 ? topUrls[0].clicks : 0}
             </div>
             <p className="text-xs text-muted-foreground">
               Highest clicks
@@ -213,7 +215,7 @@ export default async function AnalyticsPage() {
           {topUrls.length > 0 ? (
             <div className="space-y-4">
               {topUrls.map((url, index) => (
-                <div key={(url as any).id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div key={url.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3">
                       <div className="flex items-center justify-center w-8 h-8 bg-blue-100 rounded-full text-blue-600 font-semibold text-sm">
@@ -221,24 +223,24 @@ export default async function AnalyticsPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-gray-900 truncate">
-                          /{(url as any).short_code}
+                          /{url.short_code}
                         </p>
                         <p className="text-sm text-gray-500 truncate">
-                          {(url as any).original_url}
+                          {url.original_url}
                         </p>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <Badge variant={(url as any).is_active ? "default" : "secondary"}>
-                      {(url as any).is_active ? 'Active' : 'Inactive'}
+                    <Badge variant={url.is_active ? "default" : "secondary"}>
+                      {url.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                     <div className="text-right">
                       <p className="text-sm font-semibold text-gray-900">
-                        {(url as any).clicks} clicks
+                        {url.clicks} clicks
                       </p>
                       <p className="text-xs text-gray-500">
-                        Created {new Date((url as any).created_at).toLocaleDateString()}
+                        Created {new Date(url.created_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
@@ -268,25 +270,25 @@ export default async function AnalyticsPage() {
           {recentUrls.length > 0 ? (
             <div className="space-y-4">
               {recentUrls.map((url) => (
-                <div key={(url as any).id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div key={url.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      /{(url as any).short_code}
+                      /{url.short_code}
                     </p>
                     <p className="text-sm text-gray-500 truncate">
-                      {(url as any).original_url}
+                      {url.original_url}
                     </p>
                   </div>
                   <div className="flex items-center space-x-4">
-                    <Badge variant={(url as any).is_active ? "default" : "secondary"}>
-                      {(url as any).is_active ? 'Active' : 'Inactive'}
+                    <Badge variant={url.is_active ? "default" : "secondary"}>
+                      {url.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                     <div className="text-right">
                       <p className="text-sm font-semibold text-gray-900">
-                        {(url as any).clicks} clicks
+                        {url.clicks} clicks
                       </p>
                       <p className="text-xs text-gray-500">
-                        {new Date((url as any).created_at).toLocaleDateString()}
+                        {new Date(url.created_at).toLocaleDateString()}
                       </p>
                     </div>
                   </div>

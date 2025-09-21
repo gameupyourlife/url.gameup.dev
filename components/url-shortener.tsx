@@ -1,13 +1,14 @@
 'use client'
 
 import { useState } from 'react'
-import { createBrowserClient } from '@/lib/supabase'
+
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { Copy, ExternalLink } from 'lucide-react'
+import Link from 'next/link'
 
 type ShortenedUrl = {
   id: string
@@ -23,13 +24,12 @@ export function UrlShortener() {
   const [customCode, setCustomCode] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [shortenedUrl, setShortenedUrl] = useState<ShortenedUrl | null>(null)
-  const supabase = createBrowserClient()
 
   const isValidUrl = (string: string) => {
     try {
       new URL(string)
       return true
-    } catch (_) {
+    } catch {
       return false
     }
   }
@@ -82,8 +82,8 @@ export function UrlShortener() {
       toast.success('URL shortened successfully!')
       setUrl('')
       setCustomCode('')
-    } catch (error: any) {
-      toast.error(error.message || 'Failed to shorten URL')
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to shorten URL')
     } finally {
       setIsLoading(false)
     }
@@ -93,7 +93,7 @@ export function UrlShortener() {
     try {
       await navigator.clipboard.writeText(text)
       toast.success('Copied to clipboard!')
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to copy to clipboard')
     }
   }
@@ -185,9 +185,9 @@ export function UrlShortener() {
             <div className="text-center">
               <p className="text-sm text-gray-500">
                 Want to track clicks and manage your URLs? 
-                <a href="/auth" className="text-blue-600 hover:underline ml-1">
+                <Link href="/auth" className="text-blue-600 hover:underline ml-1">
                   Sign up for free
-                </a>
+                </Link>
               </p>
             </div>
           </CardContent>

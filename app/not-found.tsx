@@ -13,7 +13,7 @@ export default function NotFound() {
           </div>
           <CardTitle className="text-2xl">Short Link Not Found</CardTitle>
           <CardDescription className="text-base">
-            The shortened URL you're trying to access doesn't exist, has been deleted, or has been deactivated by its owner.
+            The shortened URL you&apos;re trying to access doesn&apos;t exist, has been deleted, or has been deactivated by its owner.
           </CardDescription>
         </CardHeader>
         <CardContent className="text-center space-y-4">

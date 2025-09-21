@@ -72,7 +72,7 @@ export function UrlList({ urls }: UrlListProps) {
     try {
       await navigator.clipboard.writeText(text)
       toast.success('Copied to clipboard!')
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to copy to clipboard')
     }
   }
@@ -209,7 +209,6 @@ export function UrlList({ urls }: UrlListProps) {
                         <ExternalLink className="h-4 w-4" />
                       </Button>
                       <QRCodeGenerator 
-                        url={url.original_url} 
                         shortCode={url.short_code} 
                       />
                     </div>

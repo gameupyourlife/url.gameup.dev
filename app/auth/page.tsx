@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createBrowserClient } from '@/lib/supabase'
+import type { User } from '@supabase/supabase-js'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,23 +17,9 @@ export default function AuthPage() {
   const [fullName, setFullName] = useState('')
   const supabase = createBrowserClient()
 
-  const testConnection = async () => {
-    try {
-      const { data, error } = await supabase.from('profiles').select('count', { count: 'exact', head: true })
-      if (error) {
-        console.error('Connection test error:', error)
-        toast.error(`Connection failed: ${error.message}`)
-      } else {
-        console.log('Connection test successful:', data)
-        toast.success('Supabase connection successful!')
-      }
-    } catch (error) {
-      console.error('Connection test failed:', error)
-      toast.error('Connection test failed')
-    }
-  }
 
-  const ensureProfileExists = async (user: any) => {
+
+  const ensureProfileExists = async (user: User) => {
     try {
       // First, check if profile exists using the current session
       const { data: existingProfile, error: fetchError } = await supabase
@@ -93,7 +80,7 @@ export default function AuthPage() {
         toast.success('Signed in successfully!')
         window.location.href = '/dashboard'
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An unexpected error occurred')
     } finally {
       setIsLoading(false)
@@ -167,7 +154,9 @@ export default function AuthPage() {
           // If the user is immediately confirmed (email confirmation disabled)
           if (data.session) {
             // User is logged in, try to ensure profile exists
-            await ensureProfileExists(data.user)
+            if (data.user) {
+              await ensureProfileExists(data.user)
+            }
             setTimeout(() => {
               window.location.href = '/dashboard'
             }, 1000)
@@ -198,7 +187,7 @@ export default function AuthPage() {
       if (error) {
         toast.error(error.message)
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('An unexpected error occurred')
     } finally {
       setIsLoading(false)

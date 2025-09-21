@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { toast } from 'sonner'
 import { createUrlSchema, type CreateUrlInput, formatValidationErrors, isReservedPath } from '@/lib/validation'
+import { z } from 'zod'
 import { createUrlAction } from '@/lib/actions'
 
 export function CreateUrlForm() {
@@ -21,16 +22,19 @@ export function CreateUrlForm() {
       createUrlSchema.parse(input)
       setErrors({})
       return true
-    } catch (error: any) {
-      const validationErrors = formatValidationErrors(error)
-      setErrors(validationErrors)
-      
-      // Show the first error in a toast
-      const firstError = Object.values(validationErrors)[0]
-      if (firstError) {
-        toast.error(firstError)
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        const validationErrors = formatValidationErrors(error)
+        setErrors(validationErrors)
+        
+        // Show the first error in a toast
+        const firstError = Object.values(validationErrors)[0]
+        if (firstError) {
+          toast.error(firstError)
+        }
+        
+        return false
       }
-      
       return false
     }
   }
@@ -68,7 +72,7 @@ export function CreateUrlForm() {
           }
           toast.error(result.error || 'Failed to shorten URL')
         }
-      } catch (error: any) {
+      } catch (error) {
         toast.error('An unexpected error occurred')
         console.error('Form submission error:', error)
       }

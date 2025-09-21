@@ -3,11 +3,14 @@ import { Button } from '@/components/ui/button'
 import { ErrorHandler } from '@/components/error-handler'
 import { SimpleThemeToggle } from '@/components/theme-toggle'
 import Link from 'next/link'
+import { Suspense } from 'react'
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted">
-      <ErrorHandler />
+      <Suspense fallback={null}>
+        <ErrorHandler />
+      </Suspense>
       {/* Header */}
       <header className="border-b border-border bg-background/80 backdrop-blur-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

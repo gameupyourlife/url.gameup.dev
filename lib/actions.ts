@@ -11,8 +11,13 @@ import {
     type UpdateUrlInput
 } from '@/lib/validation'
 
+import { Database } from '@/lib/supabase'
+
+// Database row types
+type UrlRow = Database['public']['Tables']['urls']['Row']
+
 // Response types for better type safety
-export type ActionResult<T = any> = {
+export type ActionResult<T = unknown> = {
   success: boolean
   data?: T
   error?: string
@@ -88,7 +93,8 @@ export async function createUrlAction(input: CreateUrlInput): Promise<ActionResu
     }
 
     // Insert the URL
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('urls')
       .insert({
         original_url: validatedData.original_url,
@@ -96,7 +102,7 @@ export async function createUrlAction(input: CreateUrlInput): Promise<ActionResu
         user_id: session.user.id,
         title: validatedData.title || null,
         description: validatedData.description || null,
-      } as any)
+      })
       .select('*')
       .single()
 
@@ -112,17 +118,18 @@ export async function createUrlAction(input: CreateUrlInput): Promise<ActionResu
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/analytics')
 
+    const urlData = data as UrlRow
     return {
       success: true,
       data: {
-        id: (data as any).id,
-        original_url: (data as any).original_url,
-        short_code: (data as any).short_code,
-        title: (data as any).title,
-        description: (data as any).description,
-        clicks: (data as any).clicks,
-        created_at: (data as any).created_at,
-        is_active: (data as any).is_active
+        id: urlData.id,
+        original_url: urlData.original_url,
+        short_code: urlData.short_code,
+        title: urlData.title,
+        description: urlData.description,
+        clicks: urlData.clicks,
+        created_at: urlData.created_at,
+        is_active: urlData.is_active
       }
     }
   } catch (error) {
@@ -174,21 +181,25 @@ export async function updateUrlAction(urlId: string, input: UpdateUrlInput): Pro
       }
     }
 
-    if ((existingUrl as any).user_id !== session.user.id) {
+    const existingUrlData = existingUrl as { user_id: string | null }
+    if (existingUrlData.user_id !== session.user.id) {
       return {
         success: false,
         error: 'You can only update your own URLs'
       }
     }
 
-    // Update the URL
-    const { data, error } = await supabase
+    // Update the URL - using type assertion to handle Supabase typing issues
+    const updateData = {
+      title: validatedData.title || null,
+      description: validatedData.description || null,
+      ...(validatedData.is_active !== undefined && { is_active: validatedData.is_active })
+    }
+    
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('urls')
-      .update({
-        title: validatedData.title || null,
-        description: validatedData.description || null,
-        ...(validatedData.is_active !== undefined && { is_active: validatedData.is_active })
-      } as any)
+      .update(updateData)
       .eq('id', urlId)
       .select('*')
       .single()
@@ -205,18 +216,19 @@ export async function updateUrlAction(urlId: string, input: UpdateUrlInput): Pro
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/analytics')
 
+    const updatedUrlData = data as UrlRow
     return {
       success: true,
       data: {
-        id: (data as any).id,
-        original_url: (data as any).original_url,
-        short_code: (data as any).short_code,
-        title: (data as any).title,
-        description: (data as any).description,
-        clicks: (data as any).clicks,
-        created_at: (data as any).created_at,
-        updated_at: (data as any).updated_at,
-        is_active: (data as any).is_active
+        id: updatedUrlData.id,
+        original_url: updatedUrlData.original_url,
+        short_code: updatedUrlData.short_code,
+        title: updatedUrlData.title,
+        description: updatedUrlData.description,
+        clicks: updatedUrlData.clicks,
+        created_at: updatedUrlData.created_at,
+        updated_at: updatedUrlData.updated_at,
+        is_active: updatedUrlData.is_active
       }
     }
   } catch (error) {
@@ -255,7 +267,8 @@ export async function deleteUrlAction(urlId: string): Promise<ActionResult> {
       }
     }
 
-    if ((existingUrl as any).user_id !== session.user.id) {
+    const existingUrlData = existingUrl as { user_id: string | null }
+    if (existingUrlData.user_id !== session.user.id) {
       return {
         success: false,
         error: 'You can only delete your own URLs'
@@ -319,7 +332,8 @@ export async function toggleUrlActiveAction(urlId: string): Promise<ActionResult
       }
     }
 
-    if ((existingUrl as any).user_id !== session.user.id) {
+    const toggleUrlData = existingUrl as { user_id: string | null, is_active: boolean }
+    if (toggleUrlData.user_id !== session.user.id) {
       return {
         success: false,
         error: 'You can only update your own URLs'
@@ -327,9 +341,10 @@ export async function toggleUrlActiveAction(urlId: string): Promise<ActionResult
     }
 
     // Toggle the active state
-    const { data, error } = await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data, error } = await (supabase as any)
       .from('urls')
-      .update({ is_active: !(existingUrl as any).is_active } as any)
+      .update({ is_active: !toggleUrlData.is_active })
       .eq('id', urlId)
       .select('*')
       .single()
@@ -346,11 +361,12 @@ export async function toggleUrlActiveAction(urlId: string): Promise<ActionResult
     revalidatePath('/dashboard')
     revalidatePath('/dashboard/analytics')
 
+    const updatedUrl = data as { id: string, is_active: boolean }
     return {
       success: true,
       data: {
-        id: (data as any).id,
-        is_active: (data as any).is_active
+        id: updatedUrl.id,
+        is_active: updatedUrl.is_active
       }
     }
   } catch (error) {

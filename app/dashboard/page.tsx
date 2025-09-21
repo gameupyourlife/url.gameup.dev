@@ -1,10 +1,12 @@
-import { createServerClient } from '@/lib/supabase'
+import { createServerClient, Database } from '@/lib/supabase'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { UrlList } from '@/components/url-list'
 import { CreateUrlForm } from '@/components/create-url-form'
 import Link from 'next/link'
 import { Link as LinkIcon, BarChart3, MousePointerClick, Calendar } from 'lucide-react'
+
+type UrlRow = Database['public']['Tables']['urls']['Row']
 
 export default async function DashboardPage() {
   const supabase = await createServerClient()
@@ -26,7 +28,8 @@ export default async function DashboardPage() {
 
   if (!profile) {
     // Create profile if it doesn't exist
-    await supabase
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
       .from('profiles')
       .insert({
         id: session.user.id,
@@ -48,10 +51,10 @@ export default async function DashboardPage() {
       .eq('user_id', session.user.id)
   ])
 
-  const urls = urlsResponse.data || []
+  const urls = (urlsResponse.data || []) as UrlRow[]
   const totalUrls = urls.length
-  const totalClicks = (statsResponse.data || []).reduce((total, url) => total + (url as any).clicks, 0)
-  const activeUrls = urls.filter(url => (url as any).is_active).length
+  const totalClicks = ((statsResponse.data || []) as UrlRow[]).reduce((total, url) => total + url.clicks, 0)
+  const activeUrls = urls.filter(url => url.is_active).length
 
   return (
     <div className="space-y-6">
@@ -126,7 +129,7 @@ export default async function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">
               {urls.filter(url => {
-                const created = new Date((url as any).created_at)
+                const created = new Date(url.created_at)
                 const now = new Date()
                 return created.getMonth() === now.getMonth() && created.getFullYear() === now.getFullYear()
               }).length}
@@ -160,7 +163,7 @@ export default async function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <UrlList urls={urls as any} />
+          <UrlList urls={urls} />
         </CardContent>
       </Card>
     </div>
