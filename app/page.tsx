@@ -392,9 +392,9 @@ export default function Home() {
                 </svg>
               </Button>
             </Link>
-            <Link href="/auth/signin" className="inline-flex">
+            <Link href="/pricing" className="inline-flex">
               <Button variant="outline" size="lg" className="px-8 py-3 text-lg font-semibold">
-                Sign In
+                View Pricing
               </Button>
             </Link>
           </div>

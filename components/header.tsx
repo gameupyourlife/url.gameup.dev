@@ -18,12 +18,36 @@ export function Header() {
     <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center py-6">
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-8">
             <Link href="/" className="flex items-center space-x-2 group">
               <LinkIcon className="h-8 w-8 text-primary group-hover:text-primary/80 transition-colors" />
               <h1 className="text-2xl font-bold text-foreground group-hover:text-primary transition-colors">
                 URL Shortener
               </h1>
+            </Link>
+            
+            {/* Navigation Links */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link 
+                href="/pricing" 
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  pathname === '/pricing' ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                Pricing
+              </Link>
+            </nav>
+          </div>
+          
+          {/* Mobile Navigation */}
+          <div className="md:hidden flex items-center space-x-4">
+            <Link 
+              href="/pricing" 
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === '/pricing' ? 'text-primary' : 'text-muted-foreground'
+              }`}
+            >
+              Pricing
             </Link>
           </div>
           <div className="flex items-center space-x-4">
