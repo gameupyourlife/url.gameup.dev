@@ -58,10 +58,10 @@ export default function AuthPage() {
     }
 
     return (
-        <div className="flex flex-col items-center justify-center px-4 py-8">
-            <Card className="w-full max-w-md bg-card/80 backdrop-blur-sm border-border/50 shadow-2xl">
+        <div className="flex flex-col items-center justify-center px-4 py-8 min-h-screen">
+            <Card className="w-full max-w-md shadow-lg">
                 <CardHeader className="text-center pb-2">
-                    <CardTitle className="text-2xl font-bold">Sign In</CardTitle>
+                    <CardTitle className="text-2xl font-bold text-foreground">Sign In</CardTitle>
                     <CardDescription className="text-base">
                         Welcome back! Please enter your credentials to access your dashboard.
                     </CardDescription>
