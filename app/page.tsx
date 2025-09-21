@@ -1,8 +1,5 @@
 import { UrlShortener } from '@/components/url-shortener'
-import { Button } from '@/components/ui/button'
 import { ErrorHandler } from '@/components/error-handler'
-import { SimpleThemeToggle } from '@/components/theme-toggle'
-import Link from 'next/link'
 import { Suspense } from 'react'
 
 export default function Home() {
@@ -11,28 +8,9 @@ export default function Home() {
       <Suspense fallback={null}>
         <ErrorHandler />
       </Suspense>
-      {/* Header */}
-      <header className="border-b border-border bg-background/80 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
-            <div className="flex items-center space-x-4">
-              <h1 className="text-2xl font-bold text-foreground">URL Shortener</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <SimpleThemeToggle />
-              <Link href="/auth">
-                <Button variant="outline">Sign In</Button>
-              </Link>
-              <Link href="/auth">
-                <Button>Get Started</Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </header>
-
+      
       {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-foreground sm:text-6xl mb-6">
             Shorten Your URLs
@@ -81,7 +59,7 @@ export default function Home() {
             <p className="text-muted-foreground">Your links are secure and reliable with 99.9% uptime. Manage and customize your links with ease.</p>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

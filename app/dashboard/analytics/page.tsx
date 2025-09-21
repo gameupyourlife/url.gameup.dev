@@ -21,10 +21,10 @@ export default async function AnalyticsPage() {
   const supabase = await createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     return null
   }
 
@@ -33,28 +33,28 @@ export default async function AnalyticsPage() {
     supabase
       .from('urls')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .order('clicks', { ascending: false }),
     
     // Today's clicks - simplified for now since we don't have detailed click tracking
     supabase
       .from('urls')
       .select('clicks, created_at')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .gte('created_at', new Date(new Date().setHours(0, 0, 0, 0)).toISOString()),
     
     // This week's data
     supabase
       .from('urls')
       .select('clicks, created_at')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
     
     // This month's data  
     supabase
       .from('urls')
       .select('clicks, created_at')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .gte('created_at', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())
   ])
 
@@ -88,7 +88,7 @@ export default async function AnalyticsPage() {
               </Link>
             </Button>
             <div>
-              <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+              <h2 className="text-2xl font-bold leading-7  sm:truncate sm:text-3xl sm:tracking-tight">
                 Analytics
               </h2>
               <p className="mt-1 text-sm text-gray-500">
@@ -222,7 +222,7 @@ export default async function AnalyticsPage() {
                         #{index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-sm font-medium  truncate">
                           /{url.short_code}
                         </p>
                         <p className="text-sm text-gray-500 truncate">
@@ -236,7 +236,7 @@ export default async function AnalyticsPage() {
                       {url.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm font-semibold ">
                         {url.clicks} clicks
                       </p>
                       <p className="text-xs text-gray-500">
@@ -272,7 +272,7 @@ export default async function AnalyticsPage() {
               {recentUrls.map((url) => (
                 <div key={url.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium  truncate">
                       /{url.short_code}
                     </p>
                     <p className="text-sm text-gray-500 truncate">
@@ -284,7 +284,7 @@ export default async function AnalyticsPage() {
                       {url.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-gray-900">
+                      <p className="text-sm font-semibold ">
                         {url.clicks} clicks
                       </p>
                       <p className="text-xs text-gray-500">

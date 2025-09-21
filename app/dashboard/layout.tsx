@@ -10,19 +10,19 @@ export default async function DashboardLayout({
   const supabase = await createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     redirect('/auth')
   }
 
   return (
     <div className="min-h-screen bg-background">
-      <DashboardNav user={session.user} />
-      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <DashboardNav user={user} />
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         {children}
-      </main>
+      </div>
     </div>
   )
 }

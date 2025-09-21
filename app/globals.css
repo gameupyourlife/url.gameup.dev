@@ -120,3 +120,11 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom background patterns */
+.bg-grid-pattern {
+  background-image: 
+    linear-gradient(to right, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--muted-foreground) / 0.1) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+}

@@ -3,12 +3,12 @@
 import { revalidatePath } from 'next/cache'
 import { createServerClient } from '@/lib/supabase'
 import {
-    createUrlSchema,
-    updateUrlSchema,
-    generateSafeShortCode,
-    formatValidationErrors,
-    type CreateUrlInput,
-    type UpdateUrlInput
+  createUrlSchema,
+  updateUrlSchema,
+  generateSafeShortCode,
+  formatValidationErrors,
+  type CreateUrlInput,
+  type UpdateUrlInput
 } from '@/lib/validation'
 
 import { Database } from '@/lib/supabase'
@@ -42,8 +42,8 @@ export async function createUrlAction(input: CreateUrlInput): Promise<ActionResu
     const supabase = await createServerClient()
 
     // Check authentication
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
       return {
         success: false,
         error: 'You must be signed in to create URLs'
@@ -99,7 +99,7 @@ export async function createUrlAction(input: CreateUrlInput): Promise<ActionResu
       .insert({
         original_url: validatedData.original_url,
         short_code: shortCode,
-        user_id: session.user.id,
+        user_id: user.id,
         title: validatedData.title || null,
         description: validatedData.description || null,
       })
@@ -159,8 +159,8 @@ export async function updateUrlAction(urlId: string, input: UpdateUrlInput): Pro
     const supabase = await createServerClient()
 
     // Check authentication
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
       return {
         success: false,
         error: 'You must be signed in to update URLs'
@@ -182,7 +182,7 @@ export async function updateUrlAction(urlId: string, input: UpdateUrlInput): Pro
     }
 
     const existingUrlData = existingUrl as { user_id: string | null }
-    if (existingUrlData.user_id !== session.user.id) {
+    if (existingUrlData.user_id !== user.id) {
       return {
         success: false,
         error: 'You can only update your own URLs'
@@ -245,8 +245,8 @@ export async function deleteUrlAction(urlId: string): Promise<ActionResult> {
     const supabase = await createServerClient()
 
     // Check authentication
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
       return {
         success: false,
         error: 'You must be signed in to delete URLs'
@@ -268,7 +268,7 @@ export async function deleteUrlAction(urlId: string): Promise<ActionResult> {
     }
 
     const existingUrlData = existingUrl as { user_id: string | null }
-    if (existingUrlData.user_id !== session.user.id) {
+    if (existingUrlData.user_id !== user.id) {
       return {
         success: false,
         error: 'You can only delete your own URLs'
@@ -310,8 +310,8 @@ export async function toggleUrlActiveAction(urlId: string): Promise<ActionResult
     const supabase = await createServerClient()
 
     // Check authentication
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
       return {
         success: false,
         error: 'You must be signed in to update URLs'
@@ -333,7 +333,7 @@ export async function toggleUrlActiveAction(urlId: string): Promise<ActionResult
     }
 
     const toggleUrlData = existingUrl as { user_id: string | null, is_active: boolean }
-    if (toggleUrlData.user_id !== session.user.id) {
+    if (toggleUrlData.user_id !== user.id) {
       return {
         success: false,
         error: 'You can only update your own URLs'

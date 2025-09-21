@@ -10,20 +10,20 @@ export async function middleware(request: NextRequest) {
 
   const supabase = await createServerClient()
 
-  // Check if we have a session
+  // Check if we have a authenticated user
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
   // If user is not signed in and the current path is not /auth
   // redirect the user to /auth
-  if (!session && !request.nextUrl.pathname.startsWith('/auth') && request.nextUrl.pathname !== '/') {
+  if (!user && !request.nextUrl.pathname.startsWith('/auth') && request.nextUrl.pathname !== '/') {
     return NextResponse.redirect(new URL('/auth', request.url))
   }
 
   // If user is signed in and the current path is /auth
   // redirect the user to /dashboard
-  if (session && request.nextUrl.pathname.startsWith('/auth')) {
+  if (user && request.nextUrl.pathname.startsWith('/auth')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

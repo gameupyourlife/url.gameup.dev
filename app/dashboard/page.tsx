@@ -12,10 +12,10 @@ export default async function DashboardPage() {
   const supabase = await createServerClient()
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession()
+    data: { user },
+  } = await supabase.auth.getUser()
 
-  if (!session) {
+  if (!user) {
     return null
   }
 
@@ -23,7 +23,7 @@ export default async function DashboardPage() {
   const { data: profile } = await supabase
     .from('profiles')
     .select('id')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single()
 
   if (!profile) {
@@ -32,9 +32,9 @@ export default async function DashboardPage() {
     await (supabase as any)
       .from('profiles')
       .insert({
-        id: session.user.id,
-        email: session.user.email!,
-        full_name: session.user.user_metadata?.full_name || null,
+        id: user.id,
+        email: user.email!,
+        full_name: user.user_metadata?.full_name || null,
       })
   }
 
@@ -43,12 +43,12 @@ export default async function DashboardPage() {
     supabase
       .from('urls')
       .select('*')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false }),
     supabase
       .from('urls')
       .select('clicks')
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
   ])
 
   const urls = (urlsResponse.data || []) as UrlRow[]
