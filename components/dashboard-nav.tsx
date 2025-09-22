@@ -5,14 +5,14 @@ import { createBrowserClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, LogOut, Settings, Link as LinkIcon } from 'lucide-react'
+import { User, LogOut, Settings, Link as LinkIcon, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { SimpleThemeToggle } from '@/components/theme-toggle'
@@ -87,6 +87,13 @@ export function DashboardNav({ user }: DashboardNavProps) {
                 className="text-muted-foreground hover:text-foreground px-3 py-2 text-sm font-medium transition-colors"
               >
                 Analytics
+              </Link>
+              <Link 
+                href="/dashboard/upgrade" 
+                className="text-primary hover:text-primary/80 px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1"
+              >
+                <Zap className="h-4 w-4" />
+                Upgrade
               </Link>
             </nav>
           </div>
