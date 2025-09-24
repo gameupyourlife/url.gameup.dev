@@ -58,6 +58,38 @@ export interface EnhancedAnalyticsData extends AnalyticsData {
   }
 }
 
+export interface ClickData {
+  url_id: string
+  short_code: string
+  ip_address: string | null
+  user_agent: string | null
+  referer: string | null
+  host: string | null
+  device_type: string | null
+  device_vendor: string | null
+  device_model: string | null
+  browser_name: string | null
+  browser_version: string | null
+  os_name: string | null
+  os_version: string | null
+  engine_name: string | null
+  engine_version: string | null
+  cpu_architecture: string | null
+  country_code: string | null
+  country_name: string | null
+  cf_country: string | null
+  cf_ray: string | null
+  accept_language: string | null
+  accept_encoding: string | null
+  dnt: string | null
+  is_bot: boolean
+  search_params: Record<string, string> | null
+  referer_domain: string | null
+  referer_type: string | null
+  referer_source: string | null
+  clicked_at: string
+}
+
 /**
  * Extract comprehensive analytics data from a request
  */
@@ -342,7 +374,7 @@ export function parseReferer(referer: string): { domain: string; type: string; s
 /**
  * Format analytics data for easy logging
  */
-export function formatAnalyticsForLogging(analytics: AnalyticsData | EnhancedAnalyticsData): Record<string, any> {
+export function formatAnalyticsForLogging(analytics: AnalyticsData | EnhancedAnalyticsData): Record<string, string | number | boolean | object | null> {
   const refererInfo = parseReferer(analytics.referer)
   
   return {
@@ -387,7 +419,8 @@ export function formatAnalyticsForLogging(analytics: AnalyticsData | EnhancedAna
 /**
  * Log analytics with different levels and emojis for easy identification
  */
-export function logAnalytics(type: 'click' | 'error' | 'notFound', data: any): void {
+
+export function logAnalytics(type: 'click' | 'error' | 'notFound', data: Record<string, unknown>): void {
   const timestamp = new Date().toISOString()
   
   switch (type) {
@@ -414,7 +447,7 @@ export async function saveClickAnalytics(
     const supabase = await createServerClient()
     const refererInfo = parseReferer(analytics.referer)
     
-    const clickData = {
+    const clickData: ClickData = {
       url_id: urlId,
       short_code: analytics.shortCode,
       
@@ -472,7 +505,7 @@ export async function saveClickAnalytics(
     
     const { error } = await supabase
       .from('clicks')
-      .insert(clickData as any)
+      .insert(clickData as never)
     
     if (error) {
       console.error('❌ Failed to save click analytics:', error)

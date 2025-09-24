@@ -1,0 +1,392 @@
+/**
+ * Analytics service for fetching and processing click data
+ */
+
+import { createServerClient } from './supabase'
+
+// Temporary types until Supabase types are updated
+interface UrlRow {
+  id: string
+  short_code: string
+  original_url: string
+  title: string | null
+  clicks: number
+  is_active: boolean
+  created_at: string
+}
+
+interface ClickRow {
+  id: string
+  url_id: string
+  short_code: string
+  country_name: string | null
+  browser_name: string | null
+  device_type: string | null
+  referer_source: string | null
+  referer_type: string | null
+  clicked_at: string
+  is_bot: boolean | null
+  ip_address: string | null
+}
+
+export interface ClickAnalytics {
+  totalClicks: number
+  totalUrls: number
+  activeUrls: number
+  todayClicks: number
+  yesterdayClicks: number
+  thisWeekClicks: number
+  thisMonthClicks: number
+  topCountries: Array<{ country: string; clicks: number }>
+  topBrowsers: Array<{ browser: string; clicks: number }>
+  topDevices: Array<{ device: string; clicks: number }>
+  topReferrers: Array<{ referrer: string; clicks: number }>
+  recentClicks: Array<{
+    id: string
+    shortCode: string
+    originalUrl: string
+    country: string
+    browser: string
+    device: string
+    clickedAt: string
+    isBot: boolean
+  }>
+  clicksByDay: Array<{ date: string; clicks: number }>
+  clicksByHour: Array<{ hour: number; clicks: number }>
+  trafficSources: Array<{ source: string; type: string; clicks: number }>
+  botVsHuman: { human: number; bot: number }
+}
+
+export interface UrlAnalytics {
+  urlId: string
+  shortCode: string
+  originalUrl: string
+  title: string | null
+  totalClicks: number
+  uniqueClicks: number
+  clicksByDay: Array<{ date: string; clicks: number }>
+  topCountries: Array<{ country: string; clicks: number }>
+  topBrowsers: Array<{ browser: string; clicks: number }>
+  topReferrers: Array<{ referrer: string; clicks: number }>
+  recentClicks: Array<{
+    country: string
+    browser: string
+    device: string
+    clickedAt: string
+    isBot: boolean
+  }>
+}
+
+/**
+ * Get comprehensive analytics for all user URLs
+ */
+export async function getOverallAnalytics(userId: string): Promise<ClickAnalytics> {
+  const supabase = await createServerClient()
+  
+  // Get user's URLs
+  const { data: urls } = await supabase
+    .from('urls')
+    .select('id, short_code, original_url, title, clicks, is_active, created_at')
+    .eq('user_id', userId)
+  
+  const typedUrls = urls as UrlRow[] | null
+  
+  if (!typedUrls || typedUrls.length === 0) {
+    return {
+      totalClicks: 0,
+      totalUrls: 0,
+      activeUrls: 0,
+      todayClicks: 0,
+      yesterdayClicks: 0,
+      thisWeekClicks: 0,
+      thisMonthClicks: 0,
+      topCountries: [],
+      topBrowsers: [],
+      topDevices: [],
+      topReferrers: [],
+      recentClicks: [],
+      clicksByDay: [],
+      clicksByHour: [],
+      trafficSources: [],
+      botVsHuman: { human: 0, bot: 0 }
+    }
+  }
+  
+  const urlIds = typedUrls.map(url => url.id)
+  
+  // Date ranges
+  const now = new Date()
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const yesterdayStart = new Date(todayStart.getTime() - 24 * 60 * 60 * 1000)
+  const weekStart = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  const last30DaysStart = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+  
+  // Fetch all clicks for user's URLs
+  const { data: clicks } = await supabase
+    .from('clicks')
+    .select(`
+      id,
+      url_id,
+      short_code,
+      country_name,
+      browser_name,
+      device_type,
+      referer_type,
+      referer_source,
+      clicked_at,
+      is_bot,
+      ip_address
+    `)
+    .in('url_id', urlIds)
+    .order('clicked_at', { ascending: false })
+    .limit(10000) // Reasonable limit
+  
+  const typedClicks = clicks as ClickRow[] | null
+  
+  if (!typedClicks) {
+    return {
+      totalClicks: 0,
+      totalUrls: typedUrls.length,
+      activeUrls: typedUrls.filter(url => url.is_active).length,
+      todayClicks: 0,
+      yesterdayClicks: 0,
+      thisWeekClicks: 0,
+      thisMonthClicks: 0,
+      topCountries: [],
+      topBrowsers: [],
+      topDevices: [],
+      topReferrers: [],
+      recentClicks: [],
+      clicksByDay: [],
+      clicksByHour: [],
+      trafficSources: [],
+      botVsHuman: { human: 0, bot: 0 }
+    }
+  }
+  
+  // Filter clicks by time periods
+  const todayClicks = typedClicks.filter(click => new Date(click.clicked_at) >= todayStart)
+  const yesterdayClicks = typedClicks.filter(click => {
+    const clickDate = new Date(click.clicked_at)
+    return clickDate >= yesterdayStart && clickDate < todayStart
+  })
+  const thisWeekClicks = typedClicks.filter(click => new Date(click.clicked_at) >= weekStart)
+  const thisMonthClicks = typedClicks.filter(click => new Date(click.clicked_at) >= monthStart)
+  
+  // Group clicks by country
+  const countryStats = typedClicks.reduce((acc, click) => {
+    const country = click.country_name || 'Unknown'
+    acc[country] = (acc[country] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  // Group clicks by browser
+  const browserStats = typedClicks.reduce((acc, click) => {
+    const browser = click.browser_name || 'Unknown'
+    acc[browser] = (acc[browser] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  // Group clicks by device
+  const deviceStats = typedClicks.reduce((acc, click) => {
+    const device = click.device_type || 'Unknown'
+    acc[device] = (acc[device] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  // Group clicks by referrer
+  const referrerStats = typedClicks.reduce((acc, click) => {
+    const referrer = click.referer_source || click.referer_type || 'Direct'
+    acc[referrer] = (acc[referrer] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  // Group clicks by traffic source type
+  const trafficSourceStats = typedClicks.reduce((acc, click) => {
+    const type = click.referer_type || 'direct'
+    const source = click.referer_source || 'Direct'
+    acc[source] = acc[source] || { type, clicks: 0 }
+    acc[source].clicks += 1
+    return acc
+  }, {} as Record<string, { type: string; clicks: number }>)
+  
+  // Bot vs Human
+  const botVsHuman = typedClicks.reduce((acc, click) => {
+    if (click.is_bot) {
+      acc.bot += 1
+    } else {
+      acc.human += 1
+    }
+    return acc
+  }, { human: 0, bot: 0 })
+  
+  // Clicks by day (last 30 days)
+  const clicksByDay: Record<string, number> = {}
+  typedClicks.filter(click => new Date(click.clicked_at) >= last30DaysStart).forEach(click => {
+    const date = new Date(click.clicked_at).toISOString().split('T')[0]
+    clicksByDay[date] = (clicksByDay[date] || 0) + 1
+  })
+  
+  // Clicks by hour (today)
+  const clicksByHour = Array.from({ length: 24 }, (_, hour) => ({ hour, clicks: 0 }))
+  todayClicks.forEach(click => {
+    const hour = new Date(click.clicked_at).getHours()
+    clicksByHour[hour].clicks += 1
+  })
+  
+  // Recent clicks with URL info
+  const recentClicks = typedClicks.slice(0, 10).map(click => {
+    const url = typedUrls.find(u => u.id === click.url_id)
+    return {
+      id: click.id,
+      shortCode: click.short_code,
+      originalUrl: url?.original_url || '',
+      country: click.country_name || 'Unknown',
+      browser: click.browser_name || 'Unknown',
+      device: click.device_type || 'Unknown',
+      clickedAt: click.clicked_at,
+      isBot: click.is_bot || false
+    }
+  })
+  
+  return {
+    totalClicks: typedClicks.length,
+    totalUrls: typedUrls.length,
+    activeUrls: typedUrls.filter(url => url.is_active).length,
+    todayClicks: todayClicks.length,
+    yesterdayClicks: yesterdayClicks.length,
+    thisWeekClicks: thisWeekClicks.length,
+    thisMonthClicks: thisMonthClicks.length,
+    topCountries: Object.entries(countryStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([country, clicks]) => ({ country, clicks })),
+    topBrowsers: Object.entries(browserStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([browser, clicks]) => ({ browser, clicks })),
+    topDevices: Object.entries(deviceStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([device, clicks]) => ({ device, clicks })),
+    topReferrers: Object.entries(referrerStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([referrer, clicks]) => ({ referrer, clicks })),
+    recentClicks,
+    clicksByDay: Array.from({ length: 30 }, (_, i) => {
+      const date = new Date(last30DaysStart.getTime() + i * 24 * 60 * 60 * 1000)
+        .toISOString().split('T')[0]
+      return { date, clicks: clicksByDay[date] || 0 }
+    }),
+    clicksByHour,
+    trafficSources: Object.entries(trafficSourceStats)
+      .sort(([,a], [,b]) => b.clicks - a.clicks)
+      .slice(0, 10)
+      .map(([source, data]) => ({ source, type: data.type, clicks: data.clicks })),
+    botVsHuman
+  }
+}
+
+/**
+ * Get analytics for a specific URL
+ */
+export async function getUrlAnalytics(urlId: string, userId: string): Promise<UrlAnalytics | null> {
+  const supabase = await createServerClient()
+  
+  // Get URL info
+  const { data: url } = await supabase
+    .from('urls')
+    .select('id, short_code, original_url, title, clicks')
+    .eq('id', urlId)
+    .eq('user_id', userId)
+    .single()
+  
+  const typedUrl = url as UrlRow | null
+  
+  if (!typedUrl) return null
+  
+  // Get clicks for this URL
+  const { data: clicks } = await supabase
+    .from('clicks')
+    .select(`
+      country_name,
+      browser_name,
+      device_type,
+      referer_source,
+      referer_type,
+      clicked_at,
+      is_bot,
+      ip_address
+    `)
+    .eq('url_id', urlId)
+    .order('clicked_at', { ascending: false })
+  
+  const typedClicks = clicks as ClickRow[] | null
+  
+  if (!typedClicks) return null
+  
+  // Calculate unique clicks (by IP address)
+  const uniqueIPs = new Set(typedClicks.map(click => click.ip_address).filter(Boolean))
+  
+  // Group data
+  const countryStats = typedClicks.reduce((acc, click) => {
+    const country = click.country_name || 'Unknown'
+    acc[country] = (acc[country] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  const browserStats = typedClicks.reduce((acc, click) => {
+    const browser = click.browser_name || 'Unknown'
+    acc[browser] = (acc[browser] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  const referrerStats = typedClicks.reduce((acc, click) => {
+    const referrer = click.referer_source || click.referer_type || 'Direct'
+    acc[referrer] = (acc[referrer] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+  
+  // Clicks by day (last 30 days)
+  const last30DaysStart = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+  const clicksByDay: Record<string, number> = {}
+  typedClicks.filter(click => new Date(click.clicked_at) >= last30DaysStart).forEach(click => {
+    const date = new Date(click.clicked_at).toISOString().split('T')[0]
+    clicksByDay[date] = (clicksByDay[date] || 0) + 1
+  })
+  
+  return {
+    urlId: typedUrl.id,
+    shortCode: typedUrl.short_code,
+    originalUrl: typedUrl.original_url,
+    title: typedUrl.title,
+    totalClicks: typedClicks.length,
+    uniqueClicks: uniqueIPs.size,
+    clicksByDay: Array.from({ length: 30 }, (_, i) => {
+      const date = new Date(last30DaysStart.getTime() + i * 24 * 60 * 60 * 1000)
+        .toISOString().split('T')[0]
+      return { date, clicks: clicksByDay[date] || 0 }
+    }),
+    topCountries: Object.entries(countryStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([country, clicks]) => ({ country, clicks })),
+    topBrowsers: Object.entries(browserStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([browser, clicks]) => ({ browser, clicks })),
+    topReferrers: Object.entries(referrerStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([referrer, clicks]) => ({ referrer, clicks })),
+    recentClicks: typedClicks.slice(0, 20).map(click => ({
+      country: click.country_name || 'Unknown',
+      browser: click.browser_name || 'Unknown',
+      device: click.device_type || 'Unknown',
+      clickedAt: click.clicked_at,
+      isBot: click.is_bot || false
+    }))
+  }
+}
