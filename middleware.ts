@@ -1,6 +1,5 @@
 import { createServerClient } from '@/lib/supabase';
 import { NextResponse, type NextRequest } from 'next/server';
-import { geolocation } from '@vercel/functions';
 
 export async function middleware(request: NextRequest) {
   let response = NextResponse.next({
@@ -8,10 +7,6 @@ export async function middleware(request: NextRequest) {
       headers: request.headers,
     },
   })
-
-  const geo = geolocation(request)
-
-  console.log(geo);
 
   const supabase = await createServerClient()
 

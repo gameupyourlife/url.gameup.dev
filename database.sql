@@ -94,3 +94,110 @@ CREATE TRIGGER update_profiles_updated_at
 CREATE TRIGGER update_urls_updated_at
     BEFORE UPDATE ON urls
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Create clicks table for detailed analytics
+CREATE TABLE IF NOT EXISTS clicks (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    url_id UUID REFERENCES urls(id) ON DELETE CASCADE,
+    short_code TEXT NOT NULL,
+    
+    -- Request info
+    ip_address INET,
+    user_agent TEXT,
+    referer TEXT,
+    host TEXT,
+    
+    -- Device info
+    device_type TEXT,
+    device_vendor TEXT,
+    device_model TEXT,
+    
+    -- Browser info
+    browser_name TEXT,
+    browser_version TEXT,
+    
+    -- OS info
+    os_name TEXT,
+    os_version TEXT,
+    
+    -- Engine info
+    engine_name TEXT,
+    engine_version TEXT,
+    
+    -- CPU info
+    cpu_architecture TEXT,
+    
+    -- Location info
+    country_code TEXT,
+    country_name TEXT,
+    cf_country TEXT, -- Cloudflare country header
+    cf_ray TEXT,     -- Cloudflare ray ID
+    
+    -- Additional headers
+    accept_language TEXT,
+    accept_encoding TEXT,
+    dnt TEXT, -- Do Not Track
+    
+    -- Analytics flags
+    is_bot BOOLEAN DEFAULT FALSE,
+    
+    -- URL search parameters (stored as JSONB for flexibility)
+    search_params JSONB,
+    
+    -- Referer analysis
+    referer_domain TEXT,
+    referer_type TEXT, -- 'direct', 'social', 'search', 'website'
+    referer_source TEXT,
+    
+    -- Timestamps
+    clicked_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enable Row Level Security
+ALTER TABLE clicks ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for clicks table
+-- Users can view clicks for their own URLs
+CREATE POLICY "Users can view clicks for own urls" ON clicks
+    FOR SELECT USING (
+        url_id IN (
+            SELECT id FROM urls WHERE user_id = auth.uid()
+        )
+    );
+
+-- System can insert click records (no user restriction needed for analytics)
+CREATE POLICY "Allow click insertions" ON clicks
+    FOR INSERT WITH CHECK (true);
+
+-- Create indexes for performance
+CREATE INDEX IF NOT EXISTS idx_clicks_url_id ON clicks(url_id);
+CREATE INDEX IF NOT EXISTS idx_clicks_short_code ON clicks(short_code);
+CREATE INDEX IF NOT EXISTS idx_clicks_clicked_at ON clicks(clicked_at);
+CREATE INDEX IF NOT EXISTS idx_clicks_ip_address ON clicks(ip_address);
+CREATE INDEX IF NOT EXISTS idx_clicks_country_code ON clicks(country_code);
+CREATE INDEX IF NOT EXISTS idx_clicks_referer_type ON clicks(referer_type);
+CREATE INDEX IF NOT EXISTS idx_clicks_is_bot ON clicks(is_bot);
+CREATE INDEX IF NOT EXISTS idx_clicks_browser_name ON clicks(browser_name);
+CREATE INDEX IF NOT EXISTS idx_clicks_os_name ON clicks(os_name);
+CREATE INDEX IF NOT EXISTS idx_clicks_device_type ON clicks(device_type);
+
+-- Create composite indexes for common queries
+CREATE INDEX IF NOT EXISTS idx_clicks_url_date ON clicks(url_id, clicked_at);
+CREATE INDEX IF NOT EXISTS idx_clicks_country_date ON clicks(country_code, clicked_at);
+CREATE INDEX IF NOT EXISTS idx_clicks_referer_date ON clicks(referer_type, clicked_at);
+
+-- Create trigger for updated_at
+CREATE TRIGGER update_clicks_updated_at
+    BEFORE UPDATE ON clicks
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Create function to increment URL click count safely
+CREATE OR REPLACE FUNCTION increment_url_clicks(url_uuid UUID)
+RETURNS void AS $$
+BEGIN
+    UPDATE urls 
+    SET clicks = clicks + 1, updated_at = NOW()
+    WHERE id = url_uuid;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
