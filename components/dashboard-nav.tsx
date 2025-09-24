@@ -42,7 +42,7 @@ export function DashboardNav({ user }: DashboardNavProps) {
         toast.success('Signed out successfully')
         window.location.href = '/'
       }
-    } catch (_error) {
+    } catch {
       toast.error('Failed to sign out')
     } finally {
       setIsLoading(false)

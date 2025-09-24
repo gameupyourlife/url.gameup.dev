@@ -10,11 +10,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ProfileForm } from '@/components/profile-form'
 import { PlanManagement } from '@/components/plan-management'
 import { User, CreditCard, Shield, Bell, Key, Mail } from 'lucide-react'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
+
+type Profile = {
+  id: string
+  email: string
+  full_name: string | null
+  avatar_url: string | null
+  created_at: string
+  updated_at: string
+}
 
 export default function SettingsPage() {
   const searchParams = useSearchParams()
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('profile')
 
@@ -23,12 +33,16 @@ export default function SettingsPage() {
       const supabase = createBrowserClient()
       const { data: { user } } = await supabase.auth.getUser()
       
-      if (user) {
+      if (user && user.email) {
         setUser(user)
         // Mock profile data
         setProfile({
-          full_name: user.user_metadata?.full_name || '',
-          email: user.email
+          id: user.id,
+          full_name: user.user_metadata?.full_name || null,
+          email: user.email,
+          avatar_url: user.user_metadata?.avatar_url || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
         })
       }
       setLoading(false)

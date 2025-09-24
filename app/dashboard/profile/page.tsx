@@ -11,11 +11,21 @@ import { Progress } from '@/components/ui/progress'
 import { Link as LinkIcon, BarChart3, TrendingUp, Eye, Copy, Settings, ArrowUpRight, Plus, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import type { User } from '@supabase/supabase-js'
+
+type Profile = {
+  id: string
+  email: string
+  full_name: string | null
+  avatar_url: string | null
+  created_at: string
+  updated_at: string
+}
 
 export default function ProfilePage() {
   const { currentPlan } = usePlan()
-  const [user, setUser] = useState<any>(null)
-  const [profile, setProfile] = useState<any>(null)
+  const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -268,7 +278,7 @@ export default function ProfilePage() {
                   <Progress value={usagePercentage} className="h-2" />
                   {usagePercentage > 80 && (
                     <p className="text-sm text-yellow-600 dark:text-yellow-400">
-                      You're approaching your monthly limit
+                      You&apos;re approaching your monthly limit
                     </p>
                   )}
                 </>

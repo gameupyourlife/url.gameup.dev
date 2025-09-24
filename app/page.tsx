@@ -125,7 +125,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-card-foreground mb-4">
-                "This URL shortener has revolutionized our social media campaigns. The analytics are incredibly detailed and help us optimize our content strategy."
+                &ldquo;This URL shortener has revolutionized our social media campaigns. The analytics are incredibly detailed and help us optimize our content strategy.&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mr-3">
@@ -149,7 +149,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-card-foreground mb-4">
-                "Perfect for our e-commerce business. We can track which products get the most attention and adjust our inventory accordingly. Game changer!"
+                &ldquo;Perfect for our e-commerce business. We can track which products get the most attention and adjust our inventory accordingly. Game changer!&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mr-3">
@@ -173,7 +173,7 @@ export default function Home() {
                 </div>
               </div>
               <p className="text-card-foreground mb-4">
-                "As a content creator, I love how easy it is to create branded short links. The QR codes are a nice bonus for my offline marketing."
+                &ldquo;As a content creator, I love how easy it is to create branded short links. The QR codes are a nice bonus for my offline marketing.&rdquo;
               </p>
               <div className="flex items-center">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center mr-3">

@@ -9,15 +9,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import type { User } from '@supabase/supabase-js'
 import { toast } from 'sonner'
 
+type Profile = {
+  id: string
+  email: string
+  full_name: string | null
+  avatar_url: string | null
+  created_at: string
+  updated_at: string
+}
+
 interface ProfileFormProps {
   user: User
-  profile: any
+  profile: Profile | null
 }
 
 export function ProfileForm({ user, profile }: ProfileFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [fullName, setFullName] = useState(profile?.full_name || '')
-  const [email, setEmail] = useState(user.email || '')
+  const [email] = useState(user.email || '')
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

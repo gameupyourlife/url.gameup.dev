@@ -226,7 +226,7 @@ export default function CheckoutPage() {
 
                 {/* Features Included */}
                 <div className="bg-muted/50 p-4 rounded-lg">
-                  <h4 className="font-semibold text-sm mb-2">What's included:</h4>
+                  <h4 className="font-semibold text-sm mb-2">What&apos;s included:</h4>
                   <ul className="space-y-1">
                     {plan.features.slice(0, 3).map((feature, index) => (
                       <li key={index} className="flex items-center gap-2 text-sm">

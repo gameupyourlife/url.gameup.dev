@@ -92,7 +92,7 @@ export default function PricingPage() {
 
         {/* Pricing Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {plans.map((plan, index) => {
+          {plans.map((plan) => {
             const IconComponent = plan.icon
             return (
               <Card 
@@ -238,7 +238,7 @@ export default function PricingPage() {
             </div>
             <div className="text-left">
               <h3 className="font-semibold text-foreground mb-2">What happens to my URLs if I downgrade?</h3>
-              <p className="text-muted-foreground">Your existing URLs remain active. You'll just be limited to your new plan's monthly quota for new URLs.</p>
+              <p className="text-muted-foreground">Your existing URLs remain active. You&apos;ll just be limited to your new plan&apos;s monthly quota for new URLs.</p>
             </div>
             <div className="text-left">
               <h3 className="font-semibold text-foreground mb-2">Do you offer custom solutions?</h3>

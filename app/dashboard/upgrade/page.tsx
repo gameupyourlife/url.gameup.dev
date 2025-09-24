@@ -23,10 +23,11 @@ import {
   Shield
 } from 'lucide-react'
 import Link from 'next/link'
+import type { User } from '@supabase/supabase-js'
 
 export default function ManageSubscriptionPage() {
-  const { currentPlan, upgradePlan, cancelPlan } = usePlan()
-  const [user, setUser] = useState<any>(null)
+  const { currentPlan, cancelPlan } = usePlan()
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
 
@@ -411,7 +412,7 @@ export default function ManageSubscriptionPage() {
                     Cancel Subscription
                   </CardTitle>
                   <CardDescription>
-                    You'll keep access until the end of your billing period
+                    You&apos;ll keep access until the end of your billing period
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

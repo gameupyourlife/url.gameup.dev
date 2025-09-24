@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase'
-import { isReservedPath } from '@/lib/validation'
+import { NextResponse, userAgent } from 'next/server';
+import { createServerClient } from '@/lib/supabase';
+import { isReservedPath } from '@/lib/validation';
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: Promise<{ shortCode: string }> }
 ) {
   try {
@@ -15,6 +15,9 @@ export async function GET(
     }
 
     const supabase = await createServerClient()
+    const agent = userAgent(request)
+    
+    console.log(agent)
 
     // Find the URL by short code
     const { data: urlData, error } = await supabase

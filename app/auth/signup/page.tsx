@@ -72,7 +72,7 @@ export default function SignUpPage() {
             if (error) {
                 toast.error(error.message)
             }
-        } catch (_error) {
+        } catch {
             toast.error('An unexpected error occurred')
         } finally {
             setIsLoading(false)
@@ -145,7 +145,7 @@ export default function SignUpPage() {
                     window.location.href = '/dashboard'
                 }
             }
-        } catch (_error) {
+        } catch {
             toast.error('An unexpected error occurred')
         } finally {
             setIsLoading(false)

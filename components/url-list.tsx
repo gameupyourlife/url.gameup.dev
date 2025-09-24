@@ -3,38 +3,38 @@ import { useState, useTransition } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from '@/components/ui/table';
 import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle
 } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import {
-    Copy,
-    ExternalLink,
-    Edit,
-    Trash2,
-    BarChart3,
-    Eye,
-    EyeOff,
-    MoreHorizontal
+  Copy,
+  ExternalLink,
+  Edit,
+  Trash2,
+  BarChart3,
+  Eye,
+  EyeOff,
+  MoreHorizontal
 } from 'lucide-react';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { QRCodeGenerator } from '@/components/qr-code-generator';
 import { updateUrlAction, deleteUrlAction, toggleUrlActiveAction } from '@/lib/actions';
@@ -72,7 +72,7 @@ export function UrlList({ urls }: UrlListProps) {
     try {
       await navigator.clipboard.writeText(text)
       toast.success('Copied to clipboard!')
-    } catch (_error) {
+    } catch {
       toast.error('Failed to copy to clipboard')
     }
   }

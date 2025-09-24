@@ -27,7 +27,7 @@ export function PlanManagement() {
     try {
       await cancelPlan()
       toast.success('Plan cancelled successfully. You can continue using premium features until your billing period ends.')
-    } catch (error) {
+    } catch {
       toast.error('Failed to cancel plan. Please try again.')
     } finally {
       setIsCancelling(false)
@@ -93,7 +93,7 @@ export function PlanManagement() {
                 <Progress value={usagePercentage} className="h-2" />
                 {usagePercentage > 80 && (
                   <p className="text-sm text-yellow-600 dark:text-yellow-400">
-                    You're approaching your monthly limit
+                    You&apos;re approaching your monthly limit
                   </p>
                 )}
               </div>
