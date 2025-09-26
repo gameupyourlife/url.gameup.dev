@@ -49,6 +49,26 @@ export default async function AnalyticsPage() {
     clicks: device.clicks
   }))
 
+  const topLanguages = analytics.topLanguages.map((language: { language: string; clicks: number }) => ({
+    name: language.language,
+    clicks: language.clicks
+  }))
+
+  const referrerTypes = analytics.referrerTypes.map((type: { type: string; clicks: number }) => ({
+    name: type.type,
+    clicks: type.clicks
+  }))
+
+  const referrerDomains = analytics.referrerDomains.map((domain: { domain: string; clicks: number }) => ({
+    name: domain.domain,
+    clicks: domain.clicks
+  }))
+
+  const referrerSources = analytics.referrerSources.map((source: { source: string; clicks: number }) => ({
+    name: source.source,
+    clicks: source.clicks
+  }))
+
   return (
     <UnifiedAnalytics
       type="global"
@@ -64,6 +84,10 @@ export default async function AnalyticsPage() {
       topCountries={topCountries}
       topBrowsers={topBrowsers}
       topDevices={topDevices}
+      topLanguages={topLanguages}
+      referrerTypes={referrerTypes}
+      referrerDomains={referrerDomains}
+      referrerSources={referrerSources}
     />
   )
 }

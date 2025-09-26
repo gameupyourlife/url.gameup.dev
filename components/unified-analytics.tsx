@@ -68,6 +68,10 @@ interface UnifiedAnalyticsProps {
     topCountries: TopListItem[]
     topBrowsers: TopListItem[]
     topDevices: TopListItem[]
+    topLanguages?: TopListItem[]
+    referrerTypes?: TopListItem[]
+    referrerDomains?: TopListItem[]
+    referrerSources?: TopListItem[]
     recentClicks?: RecentClick[]
 
     // Individual link specific
@@ -85,6 +89,10 @@ export function UnifiedAnalytics({
     topCountries,
     topBrowsers,
     topDevices,
+    topLanguages = [],
+    referrerTypes = [],
+    referrerDomains = [],
+    referrerSources = [],
     recentClicks = [],
     urlInfo,
     title,
@@ -256,116 +264,245 @@ export function UnifiedAnalytics({
                 )}
             </div>
 
-            {/* Traffic Sources & Demographics */}
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Globe className="h-5 w-5" />
-                            Top Countries
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {topCountries.length > 0 ? (
-                            <div className="space-y-3">
-                                {topCountries.slice(0, 5).map((country, index) => (
-                                    <div key={country.name} className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-3">
-                                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
-                                            <span className="font-medium">{country.name}</span>
-                                        </div>
-                                        <Badge variant="secondary">{country.clicks} clicks</Badge>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
-                        )}
-                    </CardContent>
-                </Card>
+            {/* Technology & Demographics Section */}
+            <div className="space-y-6">
+                <div className="flex items-center gap-2">
+                    <Monitor className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-lg font-semibold">Technology & Demographics</h2>
+                </div>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Monitor className="h-5 w-5" />
-                            Top Browsers
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        {topBrowsers.length > 0 ? (
-                            <div className="space-y-3">
-                                {topBrowsers.slice(0, 5).map((browser, index) => (
-                                    <div key={browser.name} className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-3">
-                                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
-                                            <span className="font-medium">{browser.name}</span>
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Monitor className="h-5 w-5" />
+                                Top Browsers
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {topBrowsers.length > 0 ? (
+                                <div className="space-y-3">
+                                    {topBrowsers.slice(0, 5).map((browser, index) => (
+                                        <div key={browser.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium">{browser.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{browser.clicks} clicks</Badge>
                                         </div>
-                                        <Badge variant="secondary">{browser.clicks} clicks</Badge>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
-                        )}
-                    </CardContent>
-                </Card>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
+                            )}
+                        </CardContent>
+                    </Card>
 
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Smartphone className="h-5 w-5" />
+                                Top Devices
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {topDevices.length > 0 ? (
+                                <div className="space-y-3">
+                                    {topDevices.slice(0, 5).map((device, index) => (
+                                        <div key={device.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium">{device.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{device.clicks} clicks</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
+                            )}
+                        </CardContent>
+                    </Card>
+
+                    {/* Top Languages */}
+                    {topLanguages.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <Globe className="h-5 w-5" />
+                                    Languages
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3">
+                                    {topLanguages.slice(0, 5).map((language, index) => (
+                                        <div key={language.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium">{language.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{language.clicks} clicks</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <Globe className="h-5 w-5" />
+                                Top Countries
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            {topCountries.length > 0 ? (
+                                <div className="space-y-3">
+                                    {topCountries.slice(0, 5).map((country, index) => (
+                                        <div key={country.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium">{country.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{country.clicks} clicks</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
+                            )}
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+
+            {/* Traffic Sources Section */}
+            <div className="space-y-6">
+                <div className="flex items-center gap-2">
+                    <ExternalLink className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-lg font-semibold">Traffic Sources</h2>
+                </div>
+
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
+                    {/* Referrer Types */}
+                    {referrerTypes.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <MapPin className="h-5 w-5" />
+                                    Source Types
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3">
+                                    {referrerTypes.slice(0, 5).map((type, index) => (
+                                        <div key={type.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium">{type.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{type.clicks} clicks</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Top Referrer Domains */}
+                    {referrerDomains.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <ExternalLink className="h-5 w-5" />
+                                    Top Domains
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3">
+                                    {referrerDomains.slice(0, 5).map((domain, index) => (
+                                        <div key={domain.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium text-sm">{domain.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{domain.clicks} clicks</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Top Referrer Sources */}
+                    {referrerSources.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle className="flex items-center gap-2">
+                                    <ArrowLeft className="h-5 w-5" />
+                                    Top Sources
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-3">
+                                    {referrerSources.slice(0, 5).map((source, index) => (
+                                        <div key={source.name} className="flex items-center justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                                <span className="font-medium text-sm">{source.name}</span>
+                                            </div>
+                                            <Badge variant="secondary">{source.clicks} clicks</Badge>
+                                        </div>
+                                    ))}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+                </div>
+            </div>
+
+            {/* Traffic Analysis Section */}
+            <div className="space-y-6">
+                <div className="flex items-center gap-2">
+                    <Bot className="h-5 w-5 text-muted-foreground" />
+                    <h2 className="text-lg font-semibold">Traffic Analysis</h2>
+                </div>
+
+                
+
+                {/* Analytics Charts */}
+                {countryData.length > 0 && (
+
+                    <AnalyticsCharts
+                        countryData={countryData}
+                        totalClicks={totalClicks}
+                        botClicks={botClicks || 0}
+                    />
+                )}
+
+                
+
+                {/* World Map */}
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
-                            <Smartphone className="h-5 w-5" />
-                            Top Devices
+                            <MapPin className="h-5 w-5" />
+                            Geographic Distribution
                         </CardTitle>
+                        <CardDescription>
+                            Click distribution across the world
+                        </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {topDevices.length > 0 ? (
-                            <div className="space-y-3">
-                                {topDevices.slice(0, 5).map((device, index) => (
-                                    <div key={device.name} className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-3">
-                                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
-                                            <span className="font-medium">{device.name}</span>
-                                        </div>
-                                        <Badge variant="secondary">{device.clicks} clicks</Badge>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
-                        )}
+                        <div className="h-fit">
+                            <Suspense fallback={<div className="h-96 bg-muted animate-pulse rounded" />}>
+                                <WorldMap countryData={countryData} />
+                            </Suspense>
+                        </div>
                     </CardContent>
                 </Card>
             </div>
-
-            {/* Analytics Charts */}
-            {countryData.length > 0 && (
-                
-                        <AnalyticsCharts
-                            countryData={countryData}
-                            totalClicks={totalClicks}
-                            botClicks={botClicks || 0}
-                        />
-            )}
-
-            {/* World Map */}
-            <Card>
-                <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                        <MapPin className="h-5 w-5" />
-                        Geographic Distribution
-                    </CardTitle>
-                    <CardDescription>
-                        Click distribution across the world
-                    </CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="h-96">
-                        <Suspense fallback={<div className="h-96 bg-muted animate-pulse rounded" />}>
-                            <WorldMap countryData={countryData} />
-                        </Suspense>
-                    </div>
-                </CardContent>
-            </Card>
 
             {/* Recent Activity - Only for individual links */}
             {type === 'individual' && recentClicks.length > 0 && (

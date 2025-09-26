@@ -24,6 +24,8 @@ interface ClickRow {
   device_type: string | null
   referer_source: string | null
   referer_type: string | null
+  referer_domain: string | null
+  accept_language: string | null
   clicked_at: string
   is_bot: boolean | null
   ip_address: string | null
@@ -41,6 +43,10 @@ export interface ClickAnalytics {
   topBrowsers: Array<{ browser: string; clicks: number }>
   topDevices: Array<{ device: string; clicks: number }>
   topReferrers: Array<{ referrer: string; clicks: number }>
+  topLanguages: Array<{ language: string; clicks: number }>
+  referrerTypes: Array<{ type: string; clicks: number }>
+  referrerDomains: Array<{ domain: string; clicks: number }>
+  referrerSources: Array<{ source: string; clicks: number }>
   recentClicks: Array<{
     id: string
     shortCode: string
@@ -104,6 +110,10 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
       topBrowsers: [],
       topDevices: [],
       topReferrers: [],
+      topLanguages: [],
+      referrerTypes: [],
+      referrerDomains: [],
+      referrerSources: [],
       recentClicks: [],
       clicksByDay: [],
       clicksByHour: [],
@@ -134,6 +144,8 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
       device_type,
       referer_type,
       referer_source,
+      referer_domain,
+      accept_language,
       clicked_at,
       is_bot,
       ip_address
@@ -157,6 +169,10 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
       topBrowsers: [],
       topDevices: [],
       topReferrers: [],
+      topLanguages: [],
+      referrerTypes: [],
+      referrerDomains: [],
+      referrerSources: [],
       recentClicks: [],
       clicksByDay: [],
       clicksByHour: [],
@@ -199,6 +215,72 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
   const referrerStats = typedClicks.reduce((acc, click) => {
     const referrer = click.referer_source || click.referer_type || 'Direct'
     acc[referrer] = (acc[referrer] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+
+  // Group clicks by language (parse accept_language header)
+  const languageStats = typedClicks.reduce((acc, click) => {
+    if (click.accept_language) {
+      // Parse the first language from accept-language header
+      // Format is usually like "en-US,en;q=0.9,es;q=0.8"
+      const primaryLang = click.accept_language.split(',')[0].split('-')[0].toLowerCase()
+      const languageNames: Record<string, string> = {
+        'en': 'English',
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German',
+        'it': 'Italian',
+        'pt': 'Portuguese',
+        'ru': 'Russian',
+        'ja': 'Japanese',
+        'ko': 'Korean',
+        'zh': 'Chinese',
+        'ar': 'Arabic',
+        'hi': 'Hindi',
+        'nl': 'Dutch',
+        'sv': 'Swedish',
+        'da': 'Danish',
+        'no': 'Norwegian',
+        'fi': 'Finnish',
+        'pl': 'Polish',
+        'tr': 'Turkish',
+        'th': 'Thai'
+      }
+      const language = languageNames[primaryLang] || primaryLang.toUpperCase()
+      acc[language] = (acc[language] || 0) + 1
+    } else {
+      acc['Unknown'] = (acc['Unknown'] || 0) + 1
+    }
+    return acc
+  }, {} as Record<string, number>)
+
+  // Group clicks by referrer type
+  const referrerTypeStats = typedClicks.reduce((acc, click) => {
+    const type = click.referer_type || 'direct'
+    const typeNames: Record<string, string> = {
+      'direct': 'Direct',
+      'social': 'Social Media',
+      'search': 'Search Engine',
+      'website': 'Other Website',
+      'email': 'Email',
+      'ad': 'Advertisement'
+    }
+    const displayType = typeNames[type] || type.charAt(0).toUpperCase() + type.slice(1)
+    acc[displayType] = (acc[displayType] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+
+  // Group clicks by referrer domain
+  const referrerDomainStats = typedClicks.reduce((acc, click) => {
+    const domain = click.referer_domain || 'Direct'
+    acc[domain] = (acc[domain] || 0) + 1
+    return acc
+  }, {} as Record<string, number>)
+
+  // Group clicks by referrer source
+  const referrerSourceStats = typedClicks.reduce((acc, click) => {
+    const source = click.referer_source || 'Direct'
+    acc[source] = (acc[source] || 0) + 1
     return acc
   }, {} as Record<string, number>)
   
@@ -274,6 +356,21 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
       .sort(([,a], [,b]) => b - a)
       .slice(0, 10)
       .map(([referrer, clicks]) => ({ referrer, clicks })),
+    topLanguages: Object.entries(languageStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 10)
+      .map(([language, clicks]) => ({ language, clicks })),
+    referrerTypes: Object.entries(referrerTypeStats)
+      .sort(([,a], [,b]) => b - a)
+      .map(([type, clicks]) => ({ type, clicks })),
+    referrerDomains: Object.entries(referrerDomainStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 15)
+      .map(([domain, clicks]) => ({ domain, clicks })),
+    referrerSources: Object.entries(referrerSourceStats)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 15)
+      .map(([source, clicks]) => ({ source, clicks })),
     recentClicks,
     clicksByDay: Array.from({ length: 30 }, (_, i) => {
       const date = new Date(last30DaysStart.getTime() + i * 24 * 60 * 60 * 1000)
@@ -316,6 +413,8 @@ export async function getUrlAnalytics(urlId: string, userId: string): Promise<Ur
       device_type,
       referer_source,
       referer_type,
+      referer_domain,
+      accept_language,
       clicked_at,
       is_bot,
       ip_address

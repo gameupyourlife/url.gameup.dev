@@ -61,7 +61,7 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
     // Function to get country color - simple dashboard style
     const getCountryColor = (countryName: string) => {
         const country = getCountryDataByName(countryName)
-        if (!country || country.count === 0) return 'hsl(var(--border))'
+        if (!country || country.count === 0) return 'var(--border)'
         return colorScale(country.count)
     }
 
@@ -72,14 +72,14 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
         if (isHovered) {
             return {
                 fill: baseColor,
-                stroke: 'hsl(var(--foreground))',
-                strokeWidth: '1.5',
+                stroke: 'var(--foreground)',
+                strokeWidth: '0.5',
             }
         }
 
         return {
             fill: baseColor,
-            stroke: 'hsl(var(--border))',
+            stroke: 'var(--border)',
             strokeWidth: '0.5',
         }
     }
@@ -101,18 +101,23 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
         <div className={`${className}`}>
             {/* Simple World Map */}
             <div className="relative mb-6">
-                <div className="bg-background border rounded-lg p-4">
-                    <ParentSize>
+                <div className="bg-background border rounded-lg">
+                    <ParentSize className=''    >
                         {({ width }) => {
-                            const height = Math.min(400, width * 0.6)
+                            // Optimal aspect ratio for world map (2:1 ratio works well for Mercator)
+                            const height = width * 0.6
+                            // Scale to fit both axes with minimal padding
+                            const scale = Math.min(width / 6.28, height / 3.14) // Based on world map proportions
+                            const translateX = width / 2
+                            const translateY = height / 2
 
                             return (
                                 <div className="relative">
                                     <svg width={width} height={height}>
                                         <Mercator
                                             data={world.features}
-                                            scale={width / 6.5}
-                                            translate={[width / 2, height / 2]}
+                                            scale={scale}
+                                            translate={[translateX, translateY]}
                                         >
                                             {mercator => (
                                                 <g>
@@ -165,7 +170,7 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 border rounded" style={{ backgroundColor: 'hsl(var(--border))' }}></div>
+                            <div className="w-4 h-4 border rounded" style={{ backgroundColor: 'var(--border )' }}></div>
                             <span className="text-xs text-muted-foreground">No data</span>
                         </div>
                         <div className="flex items-center gap-2">

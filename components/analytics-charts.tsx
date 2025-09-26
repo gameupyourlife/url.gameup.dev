@@ -15,6 +15,8 @@ import {
 import { Doughnut } from 'react-chartjs-2';
 import { useTheme } from 'next-themes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Bot, Globe, MousePointer, Users } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 ChartJS.register(
     CategoryScale,
@@ -302,84 +304,83 @@ export function AnalyticsCharts({
                     </CardContent>
                 </Card>
 
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 lg:grid-rows-3 gap-4">
-                    <Card>
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Countries</CardTitle>
-                            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold">
-                                {countryData.filter(c => c.count > 0).length}
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                                Geographic reach
-                            </p>
-                        </CardContent>
-                    </Card>
-
+                {/* Traffic Quality Cards */}
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    {/* Human Traffic */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Human Clicks</CardTitle>
-                            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                            </svg>
+                            <Users className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{humanClicks}</div>
+                            <div className="text-2xl font-bold">{totalClicks - (botClicks || 0)}</div>
                             <p className="text-xs text-muted-foreground">
-                                Quality engagement
+                                {totalClicks > 0 ? Math.round(((totalClicks - (botClicks || 0)) / totalClicks) * 100) : 0}% of total traffic
                             </p>
                         </CardContent>
                     </Card>
 
+                    {/* Bot Traffic */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Bot Clicks</CardTitle>
-                            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
+                            <Bot className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{botClicks}</div>
+                            <div className="text-2xl font-bold">{botClicks || 0}</div>
                             <p className="text-xs text-muted-foreground">
-                                Automated traffic
+                                {totalClicks > 0 ? Math.round(((botClicks || 0) / totalClicks) * 100) : 0}% of total traffic
                             </p>
                         </CardContent>
                     </Card>
 
+                    {/* Total Traffic */}
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
+                            <MousePointer className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{totalClicks || 0}</div>
+                            <p className="text-xs text-muted-foreground">
+                                Human and bot clicks combined
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    {/* Traffic Quality Score */}
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                             <CardTitle className="text-sm font-medium">Quality Score</CardTitle>
-                            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <MousePointer className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold">
-                                {totalClicks > 0 ? Math.round((humanClicks / totalClicks) * 100) : 0}%
+                                {totalClicks > 0 ? Math.round(((totalClicks - (botClicks || 0)) / totalClicks) * 100) : 0}%
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                Traffic authenticity
+                                Human interaction rate
                             </p>
                         </CardContent>
                     </Card>
 
+                    {/* Traffic Authenticity */}
                     <Card className='lg:col-span-2'>
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 ">
-                            <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
-                            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v4a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                            </svg>
+                            <CardTitle className="text-sm font-medium">Authenticity</CardTitle>
+                            <Globe className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{totalClicks}</div>
+                            <div className={cn("text-2xl font-bold", {
+                                'text-green-500': totalClicks > 0 && (((botClicks || 0) / totalClicks) < 0.1),
+                                'text-yellow-500': totalClicks > 0 && (((botClicks || 0) / totalClicks) < 0.3 && ((botClicks || 0) / totalClicks) >= 0.1),
+                                'text-red-500': totalClicks > 0 && (((botClicks || 0) / totalClicks) >= 0.3)
+                            })}>
+                                {totalClicks > 0 && (botClicks || 0) / totalClicks < 0.1 ? 'High' :
+                                    totalClicks > 0 && (botClicks || 0) / totalClicks < 0.3 ? 'Medium' : 'Low'}
+                            </div>
                             <p className="text-xs text-muted-foreground">
-                                All-time clicks
+                                Traffic authenticity rating
                             </p>
                         </CardContent>
                     </Card>
