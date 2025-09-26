@@ -1,0 +1,410 @@
+import { Suspense } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { AnalyticsCharts } from '@/components/analytics-charts'
+import { WorldMap } from '@/components/world-map'
+import {
+    Calendar,
+    Globe,
+    MapPin,
+    Monitor,
+    MousePointer,
+    Smartphone,
+    Users,
+    Bot,
+    Clock,
+    Copy,
+    ExternalLink,
+    ArrowLeft
+} from 'lucide-react'
+import Link from 'next/link'
+
+interface CountryData {
+    code: string
+    name: string
+    count: number
+}
+
+interface OverviewStats {
+    totalClicks: number
+    humanClicks?: number
+    botClicks?: number
+    totalUrls?: number
+    uniqueCountries?: number
+    thisWeekClicks?: number
+    thisMonthClicks?: number
+}
+
+interface TopListItem {
+    name: string
+    clicks: number
+}
+
+interface UrlInfo {
+    id: string
+    shortCode: string
+    originalUrl: string
+    title?: string | null
+    isActive?: boolean
+    createdAt?: string
+}
+
+interface RecentClick {
+    id: string
+    clickedAt: string
+    countryCode?: string | null
+    countryName?: string | null
+    isBot?: boolean
+}
+
+interface UnifiedAnalyticsProps {
+    // Page type
+    type: 'global' | 'individual'
+
+    // Data
+    overviewStats: OverviewStats
+    countryData: CountryData[]
+    topCountries: TopListItem[]
+    topBrowsers: TopListItem[]
+    topDevices: TopListItem[]
+    recentClicks?: RecentClick[]
+
+    // Individual link specific
+    urlInfo?: UrlInfo
+
+    // Page metadata
+    title: string
+    subtitle: string
+}
+
+export function UnifiedAnalytics({
+    type,
+    overviewStats,
+    countryData,
+    topCountries,
+    topBrowsers,
+    topDevices,
+    recentClicks = [],
+    urlInfo,
+    title,
+    subtitle
+}: UnifiedAnalyticsProps) {
+    const {
+        totalClicks,
+        humanClicks,
+        botClicks,
+        totalUrls,
+        uniqueCountries,
+        thisWeekClicks,
+        thisMonthClicks
+    } = overviewStats
+
+    return (
+        <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                    {type === 'individual' && (
+                        <div className="flex items-center gap-2 mb-4">
+                            <Button variant="ghost" size="sm" asChild>
+                                <Link href="/dashboard">
+                                    <ArrowLeft className="w-4 h-4 mr-2" />
+                                    Back to Dashboard
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
+                    <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+                    <p className="text-muted-foreground">{subtitle}</p>
+                </div>
+            </div>
+
+            {/* URL Info for individual links */}
+            {type === 'individual' && urlInfo && (
+                <Card>
+                    <CardContent className="pt-6">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex items-center gap-2 flex-wrap">
+                                <code className="bg-muted px-2 py-1 rounded text-sm">{urlInfo.shortCode}</code>
+                                <Button variant="ghost" size="sm">
+                                    <Copy className="w-4 h-4" />
+                                </Button>
+                                {urlInfo.isActive !== undefined && (
+                                    <Badge variant="secondary">
+                                        {urlInfo.isActive ? 'Active' : 'Inactive'}
+                                    </Badge>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                                <ExternalLink className="w-4 h-4" />
+                                <span className="truncate max-w-md">{urlInfo.originalUrl}</span>
+                            </div>
+                            {urlInfo.title && (
+                                <div className="flex items-center gap-2 text-foreground">
+                                    <span className="font-medium">{urlInfo.title}</span>
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+
+            {/* Overview Stats */}
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Total Clicks</CardTitle>
+                        <MousePointer className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">{totalClicks}</div>
+                        <p className="text-xs text-muted-foreground">
+                            {type === 'global' ? 'All time clicks across all URLs' : 'All time clicks'}
+                        </p>
+                    </CardContent>
+                </Card>
+
+                {type === 'global' && totalUrls !== undefined && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Total URLs</CardTitle>
+                            <Globe className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{totalUrls}</div>
+                            <p className="text-xs text-muted-foreground">
+                                Total shortened URLs created
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {type === 'individual' && humanClicks !== undefined && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Human Clicks</CardTitle>
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{humanClicks}</div>
+                            <p className="text-xs text-muted-foreground">
+                                Non-bot clicks
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {type === 'global' && thisWeekClicks !== undefined && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">This Week</CardTitle>
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{thisWeekClicks}</div>
+                            <p className="text-xs text-muted-foreground">
+                                Clicks in the past 7 days
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {type === 'individual' && uniqueCountries !== undefined && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Countries</CardTitle>
+                            <Globe className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{uniqueCountries}</div>
+                            <p className="text-xs text-muted-foreground">
+                                Unique countries
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {type === 'global' && thisMonthClicks !== undefined && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">This Month</CardTitle>
+                            <Calendar className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{thisMonthClicks}</div>
+                            <p className="text-xs text-muted-foreground">
+                                <span className="font-medium">{thisWeekClicks}</span> this week
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+
+                {type === 'individual' && botClicks !== undefined && (
+                    <Card>
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Bot Traffic</CardTitle>
+                            <Bot className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{botClicks}</div>
+                            <p className="text-xs text-muted-foreground">
+                                {totalClicks > 0 ? Math.round((botClicks / totalClicks) * 100) : 0}% of total
+                            </p>
+                        </CardContent>
+                    </Card>
+                )}
+            </div>
+
+            {/* Traffic Sources & Demographics */}
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Globe className="h-5 w-5" />
+                            Top Countries
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {topCountries.length > 0 ? (
+                            <div className="space-y-3">
+                                {topCountries.slice(0, 5).map((country, index) => (
+                                    <div key={country.name} className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                            <span className="font-medium">{country.name}</span>
+                                        </div>
+                                        <Badge variant="secondary">{country.clicks} clicks</Badge>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Monitor className="h-5 w-5" />
+                            Top Browsers
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {topBrowsers.length > 0 ? (
+                            <div className="space-y-3">
+                                {topBrowsers.slice(0, 5).map((browser, index) => (
+                                    <div key={browser.name} className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                            <span className="font-medium">{browser.name}</span>
+                                        </div>
+                                        <Badge variant="secondary">{browser.clicks} clicks</Badge>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
+                        )}
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Smartphone className="h-5 w-5" />
+                            Top Devices
+                        </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {topDevices.length > 0 ? (
+                            <div className="space-y-3">
+                                {topDevices.slice(0, 5).map((device, index) => (
+                                    <div key={device.name} className="flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                            <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
+                                            <span className="font-medium">{device.name}</span>
+                                        </div>
+                                        <Badge variant="secondary">{device.clicks} clicks</Badge>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">No data available</p>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
+
+            {/* Analytics Charts */}
+            {countryData.length > 0 && (
+                
+                        <AnalyticsCharts
+                            countryData={countryData}
+                            totalClicks={totalClicks}
+                            botClicks={botClicks || 0}
+                        />
+            )}
+
+            {/* World Map */}
+            <Card>
+                <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                        <MapPin className="h-5 w-5" />
+                        Geographic Distribution
+                    </CardTitle>
+                    <CardDescription>
+                        Click distribution across the world
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="h-96">
+                        <Suspense fallback={<div className="h-96 bg-muted animate-pulse rounded" />}>
+                            <WorldMap countryData={countryData} />
+                        </Suspense>
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Recent Activity - Only for individual links */}
+            {type === 'individual' && recentClicks.length > 0 && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center gap-2">
+                            <Clock className="w-5 h-5" />
+                            Recent Activity
+                        </CardTitle>
+                        <CardDescription>
+                            Latest clicks on this link
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {recentClicks.slice(0, 10).map((click) => (
+                                <div key={click.id} className="flex items-center justify-between py-2">
+                                    <div className="flex items-center gap-4">
+                                        <div className="text-sm text-muted-foreground">
+                                            {new Date(click.clickedAt).toLocaleString()}
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            {click.countryName && (
+                                                <>
+                                                    <span className="text-sm">{click.countryCode}</span>
+                                                    <span className="text-sm font-medium">{click.countryName}</span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        {click.isBot && <Badge variant="outline" className="text-xs">Bot</Badge>}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </CardContent>
+                </Card>
+            )}
+        </div>
+    )
+}
