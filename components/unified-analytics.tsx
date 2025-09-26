@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { AnalyticsCharts } from '@/components/analytics-charts'
 import { WorldMap } from '@/components/world-map'
+import { ClickTrendsChart } from '@/components/click-trends-chart'
 import {
     Calendar,
     Globe,
@@ -73,6 +74,7 @@ interface UnifiedAnalyticsProps {
     referrerDomains?: TopListItem[]
     referrerSources?: TopListItem[]
     recentClicks?: RecentClick[]
+    clicksByDay?: Array<{ date: string; clicks: number }>
 
     // Individual link specific
     urlInfo?: UrlInfo
@@ -94,6 +96,7 @@ export function UnifiedAnalytics({
     referrerDomains = [],
     referrerSources = [],
     recentClicks = [],
+    clicksByDay = [],
     urlInfo,
     title,
     subtitle
@@ -504,41 +507,20 @@ export function UnifiedAnalytics({
                 </Card>
             </div>
 
-            {/* Recent Activity - Only for individual links */}
+            {/* Click Trends - Only for individual links */}
             {type === 'individual' && recentClicks.length > 0 && (
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center gap-2">
                             <Clock className="w-5 h-5" />
-                            Recent Activity
+                            Click Trends
                         </CardTitle>
                         <CardDescription>
-                            Latest clicks on this link
+                            Daily click activity over time
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-4">
-                            {recentClicks.slice(0, 10).map((click) => (
-                                <div key={click.id} className="flex items-center justify-between py-2">
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-sm text-muted-foreground">
-                                            {new Date(click.clickedAt).toLocaleString()}
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            {click.countryName && (
-                                                <>
-                                                    <span className="text-sm">{click.countryCode}</span>
-                                                    <span className="text-sm font-medium">{click.countryName}</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        {click.isBot && <Badge variant="outline" className="text-xs">Bot</Badge>}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
+                        <ClickTrendsChart clicksByDay={clicksByDay || []} />
                     </CardContent>
                 </Card>
             )}

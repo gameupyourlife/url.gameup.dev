@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createServerClient } from '@/lib/supabase'
 import { UnifiedAnalytics } from '@/components/unified-analytics'
+import { getUrlAnalytics } from '@/lib/analytics-service'
 
 interface LinkAnalyticsPageProps {
     params: Promise<{ id: string }>
@@ -50,6 +51,17 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
         .order('clicked_at', { ascending: false })
 
     const typedClickStats = (clickStats as ClickData[]) || []
+
+    // Get comprehensive analytics for chart data
+    const { data: { user } } = await supabase.auth.getUser()
+    let clicksByDay: Array<{ date: string; clicks: number }> = []
+    
+    if (user) {
+        const analytics = await getUrlAnalytics(id, user.id)
+        if (analytics) {
+            clicksByDay = analytics.clicksByDay
+        }
+    }
 
     const totalClicks = typedClickStats.length || 0
     const uniqueCountries = [...new Set(typedClickStats.map(c => c.country_code).filter(Boolean))].length
@@ -127,6 +139,7 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
             topBrowsers={topBrowsers}
             topDevices={topDevices}
             recentClicks={recentClicks}
+            clicksByDay={clicksByDay}
         />
     )
 }
