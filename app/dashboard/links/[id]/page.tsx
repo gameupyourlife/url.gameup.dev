@@ -54,7 +54,7 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
 
     // Get comprehensive analytics for chart data
     const { data: { user } } = await supabase.auth.getUser()
-    let clicksByDay: Array<{ date: string; clicks: number }> = []
+    let clicksByDay: Array<{ date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }> = []
     
     if (user) {
         const analytics = await getUrlAnalytics(id, user.id)

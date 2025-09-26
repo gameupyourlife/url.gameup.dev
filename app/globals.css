@@ -52,6 +52,8 @@
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.65 0.15 350); /* Subtle pink primary */
+  --primary-70: oklch(74.934% 0.12058 350.269 / 0.60);
+  --primary-30: oklch(74.934% 0.12058 350.269 / 0.30);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -86,6 +88,8 @@
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.75 0.12 350); /* Subtle pink for dark mode */
+  --primary-70: oklch(74.934% 0.12058 350.269 / 0.60);
+  --primary-30: oklch(74.934% 0.12058 350.269 / 0.30);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);

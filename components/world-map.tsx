@@ -47,7 +47,7 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
     // Simple color scale - clean dashboard style
     const colorScale = scaleLinear<string>({
         domain: [0, maxCount * 0.3, maxCount * 0.7, maxCount],
-        range: ['var(--muted)', 'var(--primary) / 0.3)', 'var(--primary) / 0.6)', 'var(--primary)']
+        range: ['var(--muted)', 'var(--primary-30)', 'var(--primary-70)', 'var(--primary)']
     })
 
     // Function to get country data by name
@@ -164,7 +164,7 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
             {/* Simple Legend */}
             <div className="flex justify-center mb-6">
                 <div className="bg-background border rounded-lg p-4">
-                    <div className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+                    <div className="text-sm font-medium text-foreground mb-3 flex items-center gap-2 ">
                         <MapPin className="w-4 h-4" />
                         Click Distribution
                     </div>
@@ -174,11 +174,11 @@ export function WorldMap({ countryData, className = '' }: WorldMapProps) {
                             <span className="text-xs text-muted-foreground">No data</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded" style={{ backgroundColor: colorScale(maxCount * 0.3) }}></div>
+                            <div className="w-4 h-4 rounded" style={{ backgroundColor: 'var(--primary-30)' }}></div>
                             <span className="text-xs text-muted-foreground">Low</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-4 h-4 rounded" style={{ backgroundColor: colorScale(maxCount * 0.7) }}></div>
+                            <div className="w-4 h-4 rounded" style={{ backgroundColor: 'var(--primary-70)' }}></div>
                             <span className="text-xs text-muted-foreground">Medium</span>
                         </div>
                         <div className="flex items-center gap-2">

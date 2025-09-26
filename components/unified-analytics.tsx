@@ -13,9 +13,7 @@ import {
     MousePointer,
     Smartphone,
     Users,
-    Bot,
-    Clock,
-    Copy,
+    Bot, Copy,
     ExternalLink,
     ArrowLeft
 } from 'lucide-react'
@@ -74,7 +72,7 @@ interface UnifiedAnalyticsProps {
     referrerDomains?: TopListItem[]
     referrerSources?: TopListItem[]
     recentClicks?: RecentClick[]
-    clicksByDay?: Array<{ date: string; clicks: number }>
+    clicksByDay?: Array<{ date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }>
 
     // Individual link specific
     urlInfo?: UrlInfo
@@ -509,20 +507,7 @@ export function UnifiedAnalytics({
 
             {/* Click Trends - Only for individual links */}
             {type === 'individual' && recentClicks.length > 0 && (
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Clock className="w-5 h-5" />
-                            Click Trends
-                        </CardTitle>
-                        <CardDescription>
-                            Daily click activity over time
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ClickTrendsChart clicksByDay={clicksByDay || []} />
-                    </CardContent>
-                </Card>
+                <ClickTrendsChart clicksByDay={clicksByDay || []} />
             )}
         </div>
     )

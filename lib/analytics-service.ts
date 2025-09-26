@@ -57,7 +57,7 @@ export interface ClickAnalytics {
     clickedAt: string
     isBot: boolean
   }>
-  clicksByDay: Array<{ date: string; clicks: number }>
+  clicksByDay: Array<{ date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }>
   clicksByHour: Array<{ hour: number; clicks: number }>
   trafficSources: Array<{ source: string; type: string; clicks: number }>
   botVsHuman: { human: number; bot: number }
@@ -70,7 +70,7 @@ export interface UrlAnalytics {
   title: string | null
   totalClicks: number
   uniqueClicks: number
-  clicksByDay: Array<{ date: string; clicks: number }>
+  clicksByDay: Array<{ date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }>
   topCountries: Array<{ country: string; clicks: number }>
   topBrowsers: Array<{ browser: string; clicks: number }>
   topReferrers: Array<{ referrer: string; clicks: number }>
@@ -303,11 +303,16 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
     return acc
   }, { human: 0, bot: 0 })
   
-  // Clicks by day (last 30 days)
-  const clicksByDay: Record<string, number> = {}
+  // Clicks by day (last 30 days) with device breakdown
+  const clicksByDay: Record<string, Record<string, number>> = {}
   typedClicks.filter(click => new Date(click.clicked_at) >= last30DaysStart).forEach(click => {
     const date = new Date(click.clicked_at).toISOString().split('T')[0]
-    clicksByDay[date] = (clicksByDay[date] || 0) + 1
+    const device = click.device_type || 'unknown'
+    
+    if (!clicksByDay[date]) {
+      clicksByDay[date] = {}
+    }
+    clicksByDay[date][device] = (clicksByDay[date][device] || 0) + 1
   })
   
   // Clicks by hour (today)
@@ -375,7 +380,13 @@ export async function getOverallAnalytics(userId: string): Promise<ClickAnalytic
     clicksByDay: Array.from({ length: 30 }, (_, i) => {
       const date = new Date(last30DaysStart.getTime() + i * 24 * 60 * 60 * 1000)
         .toISOString().split('T')[0]
-      return { date, clicks: clicksByDay[date] || 0 }
+      const dayData = clicksByDay[date] || {}
+      const mobile = dayData.mobile || 0
+      const desktop = dayData.desktop || 0  
+      const tablet = dayData.tablet || 0
+      const unknown = dayData.unknown || 0
+      const total = mobile + desktop + tablet + unknown
+      return { date, mobile, desktop, tablet, unknown, total }
     }),
     clicksByHour,
     trafficSources: Object.entries(trafficSourceStats)
@@ -448,12 +459,17 @@ export async function getUrlAnalytics(urlId: string, userId: string): Promise<Ur
     return acc
   }, {} as Record<string, number>)
   
-  // Clicks by day (last 30 days)
+  // Clicks by day (last 30 days) with device breakdown
   const last30DaysStart = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-  const clicksByDay: Record<string, number> = {}
+  const clicksByDay: Record<string, Record<string, number>> = {}
   typedClicks.filter(click => new Date(click.clicked_at) >= last30DaysStart).forEach(click => {
     const date = new Date(click.clicked_at).toISOString().split('T')[0]
-    clicksByDay[date] = (clicksByDay[date] || 0) + 1
+    const device = click.device_type || 'unknown'
+    
+    if (!clicksByDay[date]) {
+      clicksByDay[date] = {}
+    }
+    clicksByDay[date][device] = (clicksByDay[date][device] || 0) + 1
   })
   
   return {
@@ -466,7 +482,13 @@ export async function getUrlAnalytics(urlId: string, userId: string): Promise<Ur
     clicksByDay: Array.from({ length: 30 }, (_, i) => {
       const date = new Date(last30DaysStart.getTime() + i * 24 * 60 * 60 * 1000)
         .toISOString().split('T')[0]
-      return { date, clicks: clicksByDay[date] || 0 }
+      const dayData = clicksByDay[date] || {}
+      const mobile = dayData.mobile || 0
+      const desktop = dayData.desktop || 0  
+      const tablet = dayData.tablet || 0
+      const unknown = dayData.unknown || 0
+      const total = mobile + desktop + tablet + unknown
+      return { date, mobile, desktop, tablet, unknown, total }
     }),
     topCountries: Object.entries(countryStats)
       .sort(([,a], [,b]) => b - a)
