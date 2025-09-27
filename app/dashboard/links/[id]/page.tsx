@@ -54,13 +54,10 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
 
     // Get comprehensive analytics for chart data
     const { data: { user } } = await supabase.auth.getUser()
-    let clicksByDay: Array<{ date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }> = []
+    let analytics: any = null
     
     if (user) {
-        const analytics = await getUrlAnalytics(id, user.id)
-        if (analytics) {
-            clicksByDay = analytics.clicksByDay
-        }
+        analytics = await getUrlAnalytics(id, user.id)
     }
 
     const totalClicks = typedClickStats.length || 0
@@ -85,35 +82,79 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
         return acc
     }, [] as { code: string; name: string; count: number }[])
 
-    // Prepare top lists data
-    const topCountries = countryData
+    // Use real analytics data if available, fallback to current data
+    const topCountries = analytics?.topCountries.map((c: any) => ({ 
+        name: c.country, 
+        clicks: c.clicks 
+    })) || countryData
         .sort((a, b) => b.count - a.count)
         .slice(0, 5)
         .map(c => ({ name: c.name, clicks: c.count }))
 
-    // Group by browser (placeholder - would need real browser data)
-    const topBrowsers = [
-        { name: 'Chrome', clicks: Math.floor(totalClicks * 0.6) },
-        { name: 'Firefox', clicks: Math.floor(totalClicks * 0.2) },
-        { name: 'Safari', clicks: Math.floor(totalClicks * 0.15) },
-        { name: 'Edge', clicks: Math.floor(totalClicks * 0.05) }
-    ].filter(b => b.clicks > 0)
+    // Use real browser data from analytics
+    const topBrowsers = analytics?.topBrowsers.map((b: any) => ({ 
+        name: b.browser, 
+        clicks: b.clicks 
+    })) || []
 
-    // Group by device (placeholder - would need real device data)
-    const topDevices = [
-        { name: 'Mobile', clicks: Math.floor(totalClicks * 0.7) },
-        { name: 'Desktop', clicks: Math.floor(totalClicks * 0.25) },
-        { name: 'Tablet', clicks: Math.floor(totalClicks * 0.05) }
-    ].filter(d => d.clicks > 0)
+    // Extract device data from analytics clicksByDay data
+    const topDevices = analytics ? (() => {
+        const deviceTotals = analytics.clicksByDay.reduce((acc: any, day: any) => {
+            acc.mobile = (acc.mobile || 0) + day.mobile
+            acc.desktop = (acc.desktop || 0) + day.desktop
+            acc.tablet = (acc.tablet || 0) + day.tablet
+            acc.unknown = (acc.unknown || 0) + day.unknown
+            return acc
+        }, {})
+        
+        return Object.entries(deviceTotals)
+            .filter(([_, clicks]) => (clicks as number) > 0)
+            .map(([device, clicks]) => ({ 
+                name: device.charAt(0).toUpperCase() + device.slice(1), 
+                clicks: clicks as number 
+            }))
+            .sort((a, b) => b.clicks - a.clicks)
+    })() : []
 
-    // Prepare recent clicks for the activity feed
-    const recentClicks = typedClickStats.slice(0, 10).map(click => ({
+    // Use real recent clicks data
+    const recentClicks = analytics?.recentClicks.map((click: any) => ({
+        id: `${click.clickedAt}-${Math.random()}`, // Generate unique ID
+        clickedAt: click.clickedAt,
+        countryCode: null, // Analytics service doesn't provide country code
+        countryName: click.country,
+        isBot: click.isBot
+    })) || typedClickStats.slice(0, 10).map(click => ({
         id: click.id,
         clickedAt: click.clicked_at,
         countryCode: click.country_code,
         countryName: click.country_name,
         isBot: click.is_bot
     }))
+
+    // Get click trends data
+    const clicksByDay = analytics?.clicksByDay || []
+
+    // Use real language data from analytics
+    const topLanguages = analytics?.topLanguages.map((l: any) => ({ 
+        name: l.language, 
+        clicks: l.clicks 
+    })) || []
+
+    // Use detailed referrer data from analytics
+    const referrerTypes = analytics?.referrerTypes.map((r: any) => ({ 
+        name: r.type, 
+        clicks: r.clicks 
+    })) || []
+
+    const referrerDomains = analytics?.referrerDomains.map((r: any) => ({ 
+        name: r.domain, 
+        clicks: r.clicks 
+    })) || []
+
+    const referrerSources = analytics?.referrerSources.map((r: any) => ({ 
+        name: r.source, 
+        clicks: r.clicks 
+    })) || []
 
     return (
         <UnifiedAnalytics
@@ -138,6 +179,10 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
             topCountries={topCountries}
             topBrowsers={topBrowsers}
             topDevices={topDevices}
+            topLanguages={topLanguages}
+            referrerTypes={referrerTypes}
+            referrerDomains={referrerDomains}
+            referrerSources={referrerSources}
             recentClicks={recentClicks}
             clicksByDay={clicksByDay}
         />

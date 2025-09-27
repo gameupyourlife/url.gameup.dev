@@ -14,10 +14,9 @@ import {
     Smartphone,
     Users,
     Bot, Copy,
-    ExternalLink,
-    ArrowLeft
+    ExternalLink, Link as LinkIcon
 } from 'lucide-react'
-import Link from 'next/link'
+import { cn } from '@/lib/utils'
 
 interface CountryData {
     code: string
@@ -114,16 +113,6 @@ export function UnifiedAnalytics({
             {/* Header */}
             <div className="flex items-start justify-between">
                 <div className="space-y-1">
-                    {type === 'individual' && (
-                        <div className="flex items-center gap-2 mb-4">
-                            <Button variant="ghost" size="sm" asChild>
-                                <Link href="/dashboard">
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Back to Dashboard
-                                </Link>
-                            </Button>
-                        </div>
-                    )}
                     <h1 className="text-3xl font-bold text-foreground">{title}</h1>
                     <p className="text-muted-foreground">{subtitle}</p>
                 </div>
@@ -140,7 +129,14 @@ export function UnifiedAnalytics({
                                     <Copy className="w-4 h-4" />
                                 </Button>
                                 {urlInfo.isActive !== undefined && (
-                                    <Badge variant="secondary">
+                                    <Badge 
+                                        variant={urlInfo.isActive ? "default" : "secondary"}
+                                        className={cn(
+                                            urlInfo.isActive 
+                                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300" 
+                                                : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                                        )}
+                                    >
                                         {urlInfo.isActive ? 'Active' : 'Inactive'}
                                     </Badge>
                                 )}
@@ -289,7 +285,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium">{browser.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{browser.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {browser.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -315,7 +313,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium">{device.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{device.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {device.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -342,7 +342,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium">{language.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{language.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {language.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -366,7 +368,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium">{country.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{country.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {country.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -380,8 +384,10 @@ export function UnifiedAnalytics({
 
             {/* Traffic Sources Section */}
             <div className="space-y-6">
-                <div className="flex items-center gap-2">
-                    <ExternalLink className="h-5 w-5 text-muted-foreground" />
+                <div className="flex items-center gap-2 pb-2 border-b border-border">
+                    <div className="p-2  rounded-lg">
+                        <ExternalLink className="h-5 w-5 " />
+                    </div>
                     <h2 className="text-lg font-semibold">Traffic Sources</h2>
                 </div>
 
@@ -403,7 +409,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium">{type.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{type.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {type.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -428,7 +436,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium text-sm">{domain.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{domain.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {domain.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>
@@ -441,7 +451,7 @@ export function UnifiedAnalytics({
                         <Card>
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2">
-                                    <ArrowLeft className="h-5 w-5" />
+                                    <LinkIcon className="h-5 w-5" />
                                     Top Sources
                                 </CardTitle>
                             </CardHeader>
@@ -453,7 +463,9 @@ export function UnifiedAnalytics({
                                                 <span className="text-sm font-medium text-muted-foreground">#{index + 1}</span>
                                                 <span className="font-medium text-sm">{source.name}</span>
                                             </div>
-                                            <Badge variant="secondary">{source.clicks} clicks</Badge>
+                                            <Badge variant="secondary">
+                                                {source.clicks} clicks
+                                            </Badge>
                                         </div>
                                     ))}
                                 </div>

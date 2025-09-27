@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Bot, Globe, MousePointer, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { getAnalyticsColors, getTrafficColors } from '@/lib/analytics-colors';
 
 ChartJS.register(
     CategoryScale,
@@ -53,13 +54,9 @@ export function AnalyticsCharts({
     const isDark = resolvedTheme === 'dark'
     const humanClicks = totalClicks - botClicks
 
-    // Simple chart colors using CSS variables approach
-    const chartColors = {
-        primary: isDark ? '#60a5fa' : '#3b82f6',
-        secondary: isDark ? '#94a3b8' : '#64748b',
-        text: isDark ? '#f1f5f9' : '#0f172a',
-        grid: isDark ? '#334155' : '#e2e8f0',
-    }
+    // Use unified color system
+    const colors = getAnalyticsColors(isDark)
+    const trafficColors = getTrafficColors(isDark)
 
     // Prepare data for country bar chart
     const topCountries = countryData
@@ -73,8 +70,8 @@ export function AnalyticsCharts({
             {
                 label: 'Clicks',
                 data: topCountries.map(c => c.count),
-                backgroundColor: chartColors.primary,
-                borderColor: chartColors.primary,
+                backgroundColor: colors.primary,
+                borderColor: colors.primary,
                 borderWidth: 0,
                 borderRadius: 4,
             },
@@ -99,7 +96,7 @@ export function AnalyticsCharts({
             title: {
                 display: true,
                 text: 'Top Countries by Clicks',
-                color: chartColors.text,
+                color: colors.text,
                 font: {
                     size: 18,
                     weight: 'bold',
@@ -111,10 +108,10 @@ export function AnalyticsCharts({
                 },
             },
             tooltip: {
-                backgroundColor: isDark ? '#1f2937' : '#ffffff',
-                titleColor: chartColors.text,
-                bodyColor: chartColors.text,
-                borderColor: chartColors.grid,
+                backgroundColor: colors.background,
+                titleColor: colors.text,
+                bodyColor: colors.text,
+                borderColor: colors.border,
                 borderWidth: 1,
                 cornerRadius: 12,
                 padding: 16,
@@ -143,7 +140,7 @@ export function AnalyticsCharts({
                     display: false,
                 },
                 ticks: {
-                    color: chartColors.secondary,
+                    color: colors.textMuted,
                     font: {
                         size: 12,
                         weight: 'normal',
@@ -157,11 +154,11 @@ export function AnalyticsCharts({
             y: {
                 beginAtZero: true,
                 grid: {
-                    color: chartColors.grid,
+                    color: colors.border,
                     lineWidth: 1,
                 },
                 ticks: {
-                    color: chartColors.secondary,
+                    color: colors.textMuted,
                     font: {
                         size: 12,
                     },
@@ -183,7 +180,7 @@ export function AnalyticsCharts({
         datasets: [
             {
                 data: [humanClicks, botClicks],
-                backgroundColor: [chartColors.primary, chartColors.secondary],
+                backgroundColor: [trafficColors.human, trafficColors.bot],
                 borderWidth: 0,
             },
         ],
@@ -203,7 +200,7 @@ export function AnalyticsCharts({
             legend: {
                 position: 'bottom' as const,
                 labels: {
-                    color: chartColors.text,
+                    color: colors.text,
                     padding: 20,
                     usePointStyle: true,
                     pointStyle: 'circle',
@@ -230,10 +227,10 @@ export function AnalyticsCharts({
             //     },
             // },
             tooltip: {
-                backgroundColor: isDark ? 'hex(var(--primary))' : '#ffffff',
-                titleColor: chartColors.text,
-                bodyColor: chartColors.text,
-                borderColor: chartColors.grid,
+                backgroundColor: colors.background,
+                titleColor: colors.text,
+                bodyColor: colors.text,
+                borderColor: colors.border,
                 borderWidth: 1,
                 cornerRadius: 12,
                 padding: 16,

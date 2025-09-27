@@ -1,4 +1,5 @@
 import { createServerClient, Database } from '@/lib/supabase'
+import { DashboardPage as DashboardLayout } from '@/components/dashboard-page'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { UrlList } from '@/components/url-list'
@@ -57,26 +58,18 @@ export default async function DashboardPage() {
   const activeUrls = urls.filter(url => url.is_active).length
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="md:flex md:items-center md:justify-between">
-        <div className="min-w-0 flex-1">
-          <h2 className="text-2xl font-bold leading-7 text-foreground sm:truncate sm:text-3xl sm:tracking-tight">
-            Dashboard
-          </h2>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Manage your shortened URLs and view analytics
-          </p>
-        </div>
-        <div className="mt-4 flex md:ml-4 md:mt-0">
-          <Button asChild>
-            <Link href="/dashboard/analytics">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              View Analytics
-            </Link>
-          </Button>
-        </div>
-      </div>
+    <DashboardLayout 
+      title="Dashboard"
+      subtitle="Manage your shortened URLs and view analytics"
+      headerActions={
+        <Button asChild>
+          <Link href="/dashboard/analytics">
+            <BarChart3 className="h-4 w-4 mr-2" />
+            View Analytics
+          </Link>
+        </Button>
+      }
+    >
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -166,6 +159,6 @@ export default async function DashboardPage() {
           <UrlList urls={urls} />
         </CardContent>
       </Card>
-    </div>
+    </DashboardLayout>
   )
 }

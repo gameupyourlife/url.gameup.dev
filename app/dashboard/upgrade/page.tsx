@@ -3,17 +3,17 @@
 import { useState, useEffect } from 'react'
 import { createBrowserClient } from '@/lib/supabase'
 import { usePlan } from '@/lib/plan-context'
+import { DashboardPage } from '@/components/dashboard-page'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { 
-  Check, 
-  Zap, 
-  ArrowLeft, 
-  CreditCard, 
+import {
+  Check,
+  Zap,
+  CreditCard,
   Calendar,
-  TrendingUp, 
+  TrendingUp,
   Crown,
   Sparkles,
   ArrowRight,
@@ -93,26 +93,18 @@ export default function ManageSubscriptionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
-      <div className="container mx-auto px-4 py-8 max-w-6xl">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard/profile">
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back
-              </Link>
-            </Button>
-            <div>
-              <h1 className="text-3xl font-bold">Manage Subscription</h1>
-              <p className="text-muted-foreground">Manage your plan and billing preferences</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-muted-foreground" />
-          </div>
+    <DashboardPage 
+      title="Manage Subscription"
+      subtitle="Manage your plan and billing preferences"
+      headerActions={
+        <div className="flex items-center gap-2">
+          <Settings className="h-5 w-5 text-muted-foreground" />
         </div>
+      }
+      fullWidth
+      noPadding
+    >
+      <div className="container  max-w-6xl">
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Current Plan & Usage */}
@@ -433,6 +425,6 @@ export default function ManageSubscriptionPage() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardPage>
   )
 }

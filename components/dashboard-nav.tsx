@@ -1,21 +1,23 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { createBrowserClient } from '@/lib/supabase'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { User, LogOut, Settings, Link as LinkIcon, Zap } from 'lucide-react'
+import { User, LogOut, Settings, Link as LinkIcon, Zap, BarChart3, Home } from 'lucide-react'
 import { toast } from 'sonner'
 import Link from 'next/link'
 import { SimpleThemeToggle } from '@/components/theme-toggle'
+import { cn } from '@/lib/utils'
 
 interface DashboardNavProps {
   user: {
@@ -30,6 +32,7 @@ interface DashboardNavProps {
 
 export function DashboardNav({ user }: DashboardNavProps) {
   const [isLoading, setIsLoading] = useState(false)
+  const pathname = usePathname()
   const supabase = createBrowserClient()
 
   const handleSignOut = async () => {
@@ -64,6 +67,28 @@ export function DashboardNav({ user }: DashboardNavProps) {
     return 'U'
   }
 
+  const navItems = [
+    {
+      href: '/dashboard',
+      label: 'Dashboard',
+      icon: Home,
+      isActive: pathname === '/dashboard'
+    },
+    {
+      href: '/dashboard/analytics',
+      label: 'Analytics', 
+      icon: BarChart3,
+      isActive: pathname.startsWith('/dashboard/analytics')
+    },
+    {
+      href: '/dashboard/upgrade',
+      label: 'Upgrade',
+      icon: Zap,
+      isActive: pathname === '/dashboard/upgrade',
+      isPrimary: true
+    }
+  ]
+
   return (
     <header className="bg-background shadow-sm border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -75,26 +100,29 @@ export function DashboardNav({ user }: DashboardNavProps) {
               <h1 className="text-xl font-bold text-foreground">URL Shortener</h1>
             </Link>
             
-            <nav className="hidden md:flex space-x-6">
-              <Link 
-                href="/dashboard" 
-                className="text-muted-foreground hover:text-foreground px-3 py-2 text-sm font-medium transition-colors"
-              >
-                Dashboard
-              </Link>
-              <Link 
-                href="/dashboard/analytics" 
-                className="text-muted-foreground hover:text-foreground px-3 py-2 text-sm font-medium transition-colors"
-              >
-                Analytics
-              </Link>
-              <Link 
-                href="/dashboard/upgrade" 
-                className="text-primary hover:text-primary/80 px-3 py-2 text-sm font-medium transition-colors flex items-center gap-1"
-              >
-                <Zap className="h-4 w-4" />
-                Upgrade
-              </Link>
+            <nav className="hidden md:flex space-x-2">
+              {navItems.map((item) => {
+                const Icon = item.icon
+                return (
+                  <Link 
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                      item.isActive 
+                        ? item.isPrimary
+                          ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                          : "bg-accent text-accent-foreground"
+                        : item.isPrimary
+                          ? "text-primary hover:text-primary/80 hover:bg-primary/10"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                    )}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.label}
+                  </Link>
+                )
+              })}
             </nav>
           </div>
 

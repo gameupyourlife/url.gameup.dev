@@ -25,31 +25,37 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { useTheme } from "next-themes"
+import { getDeviceColors } from "@/lib/analytics-colors"
 
 interface ClickTrendsChartProps {
   clicksByDay: Array<{ date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }>
 }
 
-const chartConfig = {
-  mobile: {
-    label: "Mobile",
-    color: "var(--chart-1)",
-  },
-  desktop: {
-    label: "Desktop", 
-    color: "var(--chart-2)",
-  },
-  tablet: {
-    label: "Tablet",
-    color: "var(--chart-3)",
-  },
-  unknown: {
-    label: "Unknown",
-    color: "var(--chart-4)",
-  },
-} satisfies ChartConfig
-
 export function ClickTrendsChart({ clicksByDay }: ClickTrendsChartProps) {
+  const { resolvedTheme } = useTheme()
+  const isDark = resolvedTheme === 'dark'
+  const deviceColors = getDeviceColors(isDark)
+  
+  // Create dynamic chart config with unified colors
+  const chartConfig = {
+    mobile: {
+      label: "Mobile",
+      color: deviceColors.mobile,
+    },
+    desktop: {
+      label: "Desktop", 
+      color: deviceColors.desktop,
+    },
+    tablet: {
+      label: "Tablet",
+      color: deviceColors.tablet,
+    },
+    unknown: {
+      label: "Unknown",
+      color: deviceColors.unknown,
+    },
+  } satisfies ChartConfig
   const [timeRange, setTimeRange] = React.useState("30d")
 
   // Prepare data with proper formatting

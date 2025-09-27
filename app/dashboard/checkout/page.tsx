@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { usePlan } from '@/lib/plan-context'
+import { DashboardPage } from '@/components/dashboard-page'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,16 +11,14 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import {
-  ArrowLeft,
-  CreditCard,
-  Shield,
-  Check,
-  Lock,
-  Zap,
-  Calendar,
-  RefreshCw
+    CreditCard,
+    Shield,
+    Check,
+    Lock,
+    Zap,
+    Calendar,
+    RefreshCw
 } from 'lucide-react'
-import Link from 'next/link'
 import { toast } from 'sonner'
 
 const plans = {
@@ -112,23 +111,14 @@ export default function CheckoutPage() {
   const isFormValid = formData.email && formData.cardNumber && formData.expiryDate && formData.cvv && formData.name
 
   return (
-    <div className="min-h-screen bg-background py-8">
+    <DashboardPage 
+      title="Complete Your Purchase"
+      subtitle="Secure checkout powered by industry-leading encryption"
+      className="min-h-screen bg-background py-8"
+      fullWidth
+      noPadding
+    >
       <div className="max-w-4xl mx-auto px-4">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard/upgrade">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Plans
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Complete Your Purchase</h1>
-            <p className="text-muted-foreground">
-              Secure checkout powered by industry-leading encryption
-            </p>
-          </div>
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Order Summary */}
@@ -358,6 +348,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardPage>
   )
 }

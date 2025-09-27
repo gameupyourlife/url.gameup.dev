@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createBrowserClient } from '@/lib/supabase'
 import { usePlan } from '@/lib/plan-context'
+import { DashboardPage } from '@/components/dashboard-page'
 import { ProfileForm } from '@/components/profile-form'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -96,14 +97,10 @@ export default function ProfilePage() {
     .slice(0, 3)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Profile</h1>
-          <p className="text-muted-foreground">
-            Manage your profile information and view your account overview
-          </p>
-        </div>
+    <DashboardPage 
+      title="Profile"
+      subtitle="Manage your profile information and view your account overview"
+      headerActions={
         <div className="flex gap-2">
           <Button variant="outline" asChild>
             <Link href="/dashboard/settings">
@@ -118,7 +115,8 @@ export default function ProfilePage() {
             </Link>
           </Button>
         </div>
-      </div>
+      }
+    >
 
       {/* Quick Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -418,6 +416,6 @@ export default function ProfilePage() {
           </Card>
         </div>
       </div>
-    </div>
+    </DashboardPage>
   )
 }
