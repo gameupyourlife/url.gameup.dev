@@ -1,416 +1,357 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { NextPage } from 'next'
+import { QrCode, Download, Palette, Shield } from 'lucide-react'
+import { DocsPage, DocsSection, OverviewCard, QuickStart } from '@/components/docs/docs-layout'
+import { ApiEndpoint } from '@/components/docs/api-endpoint'
 
-export default function QRCodesPage() {
+const QRCodesPage: NextPage = () => {
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold mb-2">QR Codes API</h1>
-        <p className="text-muted-foreground text-lg">
-          Generate customizable QR codes for your shortened URLs with extensive API endpoints and options.
-        </p>
-      </div>
-
+    <DocsPage
+      title="QR Codes API"
+      description="Generate customizable QR codes for your shortened URLs with extensive customization options and multiple output formats."
+      icon={<QrCode className="h-8 w-8 text-rose-600" />}
+      status="Stable"
+    >
       {/* Quick Start */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Start</CardTitle>
-          <CardDescription>
-            Generate QR codes through API endpoints with full customization support.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-semibold mb-2">Available Endpoints</h4>
-            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li><code>GET /api/qr-code/{`{shortCode}`}</code> - Generate QR for short URL</li>
-              <li><code>GET /api/qr-code/id/{`{id}`}</code> - Generate QR by URL ID (authenticated)</li>
-              <li><code>GET /api/qr-code/public/{`{shortCode}`}</code> - Public QR generation</li>
-              <li><code>POST /api/qr-code/generate</code> - Generate QR for custom URLs</li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-2">Key Features</h4>
-            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-              <li>Multiple output formats (PNG, SVG, Data URL)</li>
-              <li>Customizable colors, sizes, and error correction levels</li>
-              <li>Direct download or API response options</li>
-              <li>Rate limiting and authentication support</li>
-              <li>Public and private access modes</li>
-            </ul>
-          </div>
-        </CardContent>
-      </Card>
+      <QuickStart
+        steps={[
+          {
+            title: "Generate a basic QR code",
+            description: "Create a QR code for any URL without authentication.",
+            code: `curl "https://url.gameup.dev/api/qr?url=https://example.com"`
+          },
+          {
+            title: "Customize your QR code",
+            description: "Add colors, sizes, and format options.",
+            code: `curl "https://url.gameup.dev/api/qr?url=https://example.com&size=200&color=ff0000&format=svg"`
+          },
+          {
+            title: "Use with shortened URLs",
+            description: "Generate QR codes for your existing short URLs with authentication."
+          }
+        ]}
+      />
+
+      {/* Overview */}
+      <DocsSection
+        title="QR Code Features"
+        description="Comprehensive QR code generation with advanced customization"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <OverviewCard
+            title="Multiple Formats"
+            description="Generate QR codes in various formats for different use cases"
+            icon={<Download className="h-6 w-6 text-rose-600" />}
+            features={[
+              "PNG images",
+              "SVG vectors",
+              "Base64 data URLs",
+              "Custom dimensions"
+            ]}
+          />
+          <OverviewCard
+            title="Full Customization"
+            description="Customize appearance to match your brand"
+            icon={<Palette className="h-6 w-6 text-pink-600" />}
+            features={[
+              "Custom colors",
+              "Error correction levels",
+              "Size options",
+              "Margin controls"
+            ]}
+          />
+          <OverviewCard
+            title="Access Control"
+            description="Public and authenticated endpoints for different needs"
+            icon={<Shield className="h-6 w-6 text-rose-600" />}
+            features={[
+              "Public QR generation",
+              "Authenticated endpoints",
+              "Short URL integration",
+              "Bulk generation"
+            ]}
+          />
+          <OverviewCard
+            title="High Performance"
+            description="Optimized generation with caching and CDN delivery"
+            icon={<QrCode className="h-6 w-6 text-pink-600" />}
+            features={[
+              "Fast generation",
+              "CDN cached results",
+              "Multiple sizes",
+              "Batch processing"
+            ]}
+          />
+        </div>
+      </DocsSection>
 
       {/* API Endpoints */}
-      <Tabs defaultValue="shortcode" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="shortcode">Short Code</TabsTrigger>
-          <TabsTrigger value="id">URL ID</TabsTrigger>
-          <TabsTrigger value="public">Public</TabsTrigger>
-          <TabsTrigger value="custom">Custom URL</TabsTrigger>
-        </TabsList>
+      <DocsSection
+        title="QR Code Endpoints"
+        description="Generate and customize QR codes with powerful API endpoints"
+      >
+        {/* Public QR Code Generation */}
+        <ApiEndpoint
+          method="GET"
+          endpoint="/api/qr"
+          title="Generate QR Code (Public)"
+          description="Generate a QR code for any URL without authentication. Perfect for public tools and integrations."
+          authRequired={false}
+          parameters={[
+            {
+              name: "url",
+              type: "string",
+              required: true,
+              description: "The URL to encode in the QR code",
+              example: "https://example.com"
+            },
+            {
+              name: "size",
+              type: "number",
+              description: "Size in pixels (50-2000)",
+              default: "200",
+              example: "300"
+            },
+            {
+              name: "format",
+              type: "string",
+              description: "Output format",
+              enum: ["png", "svg", "dataurl"],
+              default: "png",
+              example: "svg"
+            },
+            {
+              name: "color",
+              type: "string",
+              description: "Foreground color (hex without #)",
+              default: "000000",
+              example: "ff0000"
+            },
+            {
+              name: "bgcolor",
+              type: "string",
+              description: "Background color (hex without #)",
+              default: "ffffff",
+              example: "f0f0f0"
+            },
+            {
+              name: "margin",
+              type: "number",
+              description: "Margin size in modules",
+              default: "4",
+              example: "2"
+            },
+            {
+              name: "errorlevel",
+              type: "string",
+              description: "Error correction level",
+              enum: ["L", "M", "Q", "H"],
+              default: "M",
+              example: "H"
+            }
+          ]}
+          responses={[
+            {
+              status: 200,
+              description: "QR code generated successfully",
+              example: "Binary image data (PNG) or SVG markup or base64 data URL depending on format"
+            },
+            {
+              status: 400,
+              description: "Invalid parameters",
+              example: `{
+  "error": "Invalid URL",
+  "message": "The provided URL is not valid"
+}`
+            }
+          ]}
+          examples={[
+            {
+              title: "Basic QR Code",
+              request: `curl "https://url.gameup.dev/api/qr?url=https://example.com"`,
+              response: "[Binary PNG image data]",
+              language: "curl"
+            },
+            {
+              title: "Custom SVG QR Code",
+              request: `curl "https://url.gameup.dev/api/qr?url=https://example.com&size=300&format=svg&color=0066cc"`,
+              response: `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+  <!-- SVG QR code markup -->
+</svg>`,
+              language: "curl"
+            }
+          ]}
+          notes={[
+            {
+              type: "info",
+              content: "This endpoint does not require authentication and can be used publicly. Rate limits apply based on IP address."
+            }
+          ]}
+        />
 
-        {/* Short Code Tab */}
-        <TabsContent value="shortcode" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Badge variant="outline">GET</Badge>
-                /api/qr-code/{`{shortCode}`}
-              </CardTitle>
-              <CardDescription>
-                Generate QR code for a shortened URL using its short code. Optional authentication for private URLs.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-3">Example Request</h4>
-                <div className="bg-muted rounded-lg p-4">
-                  <pre className="text-sm overflow-x-auto">
-                    <code>{`GET /api/qr-code/abc123?size=400&format=png&foregroundColor=%23FF0000
+        {/* QR Code for Short URLs */}
+        <ApiEndpoint
+          method="GET"
+          endpoint="/api/urls/{id}/qr"
+          title="Get QR Code for Short URL"
+          description="Generate a QR code for an existing shortened URL with full customization options."
+          parameters={[
+            {
+              name: "id",
+              type: "string",
+              required: true,
+              description: "The unique identifier of the shortened URL",
+              example: "clm123abc"
+            },
+            {
+              name: "size",
+              type: "number",
+              description: "Size in pixels (50-2000)",
+              default: "200",
+              example: "400"
+            },
+            {
+              name: "format",
+              type: "string",
+              description: "Output format",
+              enum: ["png", "svg", "dataurl"],
+              default: "png",
+              example: "svg"
+            },
+            {
+              name: "color",
+              type: "string",
+              description: "Foreground color (hex without #)",
+              default: "000000",
+              example: "333333"
+            },
+            {
+              name: "bgcolor",
+              type: "string",
+              description: "Background color (hex without #)",
+              default: "ffffff",
+              example: "f8f9fa"
+            }
+          ]}
+          responses={[
+            {
+              status: 200,
+              description: "QR code for short URL generated successfully",
+              example: "Binary image data or SVG markup depending on format"
+            },
+            {
+              status: 404,
+              description: "Short URL not found",
+              example: `{
+  "error": "URL not found",
+  "message": "No URL found with the provided ID"
+}`
+            }
+          ]}
+          examples={[
+            {
+              title: "Get QR Code for Short URL",
+              request: `curl -H "Authorization: Bearer YOUR_API_KEY" \\
+  "https://url.gameup.dev/api/urls/abc123/qr?size=300&format=png"`,
+              response: "[Binary PNG image data]",
+              language: "curl"
+            }
+          ]}
+        />
 
-# With authentication
-curl "https://url.gameup.dev/api/qr-code/abc123?size=400" \\
-  -H "Authorization: Bearer your-api-key"`}</code>
-                  </pre>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3">Response</h4>
-                <div className="bg-muted rounded-lg p-4">
-                  <pre className="text-sm overflow-x-auto">
-                    <code>{`# Returns PNG image data directly
-Content-Type: image/png
-Content-Length: 1234
-
-# Or JSON for SVG/DataURL formats
-{
-  "success": true,
-  "data": {
-    "qrCode": "data:image/png;base64,iVBORw0KGgo...",
-    "format": "dataurl",
-    "shortCode": "abc123",
-    "fullUrl": "https://url.gameup.dev/abc123"
-  }
-}`}</code>
-                  </pre>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* URL ID Tab */}
-        <TabsContent value="id" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Badge variant="outline">GET</Badge>
-                /api/qr-code/id/{`{id}`}
-                <Badge variant="secondary">Auth Required</Badge>
-              </CardTitle>
-              <CardDescription>
-                Generate QR code for your URL using the internal UUID. Always requires authentication.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-3">Example Request</h4>
-                <div className="bg-muted rounded-lg p-4">
-                  <pre className="text-sm overflow-x-auto">
-                    <code>{`GET /api/qr-code/id/550e8400-e29b-41d4-a716-446655440000?size=300&download=true
-
-curl "https://url.gameup.dev/api/qr-code/id/550e8400-e29b-41d4-a716-446655440000" \\
-  -H "Authorization: Bearer your-api-key" \\
-  -o qr-code.png`}</code>
-                  </pre>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3">Benefits</h4>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li><strong>Dashboard Integration:</strong> Use directly with URL management APIs</li>
-                  <li><strong>No Extra Lookups:</strong> No need to fetch short code first</li>
-                  <li><strong>Inactive URLs:</strong> Generate QR codes for inactive URLs you own</li>
-                  <li><strong>Consistent API:</strong> Matches other URL management endpoints</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Public Tab */}
-        <TabsContent value="public" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Badge variant="outline">GET</Badge>
-                /api/qr-code/public/{`{shortCode}`}
-                <Badge variant="secondary">No Auth</Badge>
-              </CardTitle>
-              <CardDescription>
-                Generate QR code for any active short URL without authentication.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-3">Example Request</h4>
-                <div className="bg-muted rounded-lg p-4">
-                  <pre className="text-sm overflow-x-auto">
-                    <code>{`GET /api/qr-code/public/abc123?size=200&margin=2
-
-# No authentication required
-curl "https://url.gameup.dev/api/qr-code/public/abc123?format=svg" \\
-  -o qr-code.svg`}</code>
-                  </pre>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3">Limitations</h4>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li><strong>Active URLs Only:</strong> Only works with active/public URLs</li>
-                  <li><strong>Size Limits:</strong> Maximum 512px for public endpoint</li>
-                  <li><strong>Rate Limited:</strong> 50 requests per minute per IP</li>
-                  <li><strong>Limited Privacy:</strong> Doesn&apos;t expose original URL in response</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Custom URL Tab */}
-        <TabsContent value="custom" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Badge variant="outline">POST</Badge>
-                /api/qr-code/generate
-                <Badge variant="secondary">Auth Required</Badge>
-              </CardTitle>
-              <CardDescription>
-                Generate QR code for any custom URL (authenticated users only).
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <h4 className="font-semibold mb-3">Example Request</h4>
-                <div className="bg-muted rounded-lg p-4">
-                  <pre className="text-sm overflow-x-auto">
-                    <code>{`POST /api/qr-code/generate
-Authorization: Bearer your-api-key
-Content-Type: application/json
-
-{
-  "url": "https://example.com/very-long-url",
-  "options": {
-    "size": 400,
-    "format": "svg",
-    "errorCorrectionLevel": "H",
-    "foregroundColor": "#0066CC",
-    "backgroundColor": "#FFFFFF"
-  }
-}`}</code>
-                  </pre>
-                </div>
-              </div>
-
-              <div>
-                <h4 className="font-semibold mb-3">Use Cases</h4>
-                <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li><strong>External URLs:</strong> Generate QR codes for any URL, not just shortened ones</li>
-                  <li><strong>Batch Processing:</strong> Generate multiple QR codes programmatically</li>
-                  <li><strong>Custom Styling:</strong> Full control over appearance and format</li>
-                  <li><strong>Integration:</strong> Perfect for embedding in applications or reports</li>
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Customization Options */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Customization Options</CardTitle>
-          <CardDescription>
-            All QR code endpoints support extensive customization through query parameters.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold mb-3">Size & Format</h4>
-              <div className="space-y-2 text-sm">
-                <div><code>size</code> - Size in pixels (100-2000, default: 256)</div>
-                <div><code>format</code> - Output format: png, svg, dataurl</div>
-                <div><code>margin</code> - Quiet zone margin (0-20, default: 4)</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-3">Appearance</h4>
-              <div className="space-y-2 text-sm">
-                <div><code>foregroundColor</code> - Hex color for dark areas</div>
-                <div><code>backgroundColor</code> - Hex color for light areas</div>
-                <div><code>errorCorrectionLevel</code> - L, M, Q, H</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-3">Download Options</h4>
-              <div className="space-y-2 text-sm">
-                <div><code>download</code> - Return as attachment (true/false)</div>
-                <div><code>filename</code> - Custom filename for downloads</div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-3">Error Correction Levels</h4>
-              <div className="space-y-2 text-sm">
-                <div><code>L</code> - Low (~7% recovery)</div>
-                <div><code>M</code> - Medium (~15% recovery) - Default</div>
-                <div><code>Q</code> - Quartile (~25% recovery)</div>
-                <div><code>H</code> - High (~30% recovery)</div>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Rate Limiting & Authentication */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Rate Limiting & Authentication</CardTitle>
-          <CardDescription>
-            Understanding access controls and usage limits.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold mb-3">Rate Limits</h4>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3">
-                  <Badge variant="outline" className="mt-0.5">QR Endpoints</Badge>
-                  <div className="flex-1">
-                    <p className="text-sm">40 requests per minute per IP/user</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Badge variant="outline" className="mt-0.5">Public Endpoint</Badge>
-                  <div className="flex-1">
-                    <p className="text-sm">50 requests per minute per IP</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-3">Authentication Methods</h4>
-              <div className="space-y-2">
-                <div className="flex items-start gap-3">
-                  <Badge variant="secondary" className="mt-0.5">API Key</Badge>
-                  <div className="flex-1">
-                    <p className="text-sm">Include in Authorization header: <code>Bearer your-api-key</code></p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Badge variant="secondary" className="mt-0.5">Session</Badge>
-                  <div className="flex-1">
-                    <p className="text-sm">Automatic authentication for logged-in dashboard users</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h4 className="font-semibold mb-3">Response Headers</h4>
-              <div className="bg-muted rounded-lg p-4">
-                <pre className="text-sm">
-                  <code>{`X-RateLimit-Limit: 40
-X-RateLimit-Remaining: 35
-X-RateLimit-Reset: 1640995200
-Cache-Control: public, max-age=300`}</code>
-                </pre>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Integration Examples */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Integration Examples</CardTitle>
-          <CardDescription>
-            Common patterns for integrating QR code generation into your applications.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <h4 className="font-semibold mb-3">Dashboard QR Code Button</h4>
-            <div className="bg-muted rounded-lg p-4">
-              <pre className="text-sm overflow-x-auto">
-                <code>{`// Generate QR code for URL in dashboard
-async function generateQRCode(urlId) {
-  const response = await fetch(\`/api/qr-code/id/\${urlId}?size=400&download=true\`, {
-    headers: {
-      'Authorization': \`Bearer \${apiKey}\`
+        {/* Bulk QR Code Generation */}
+        <ApiEndpoint
+          method="POST"
+          endpoint="/api/qr/bulk"
+          title="Bulk QR Code Generation"
+          description="Generate multiple QR codes in a single request for batch processing."
+          requestBody={{
+            description: "Array of QR code generation requests",
+            example: `{
+  "requests": [
+    {
+      "url": "https://example.com/page1",
+      "size": 200,
+      "format": "png",
+      "filename": "qr1"
+    },
+    {
+      "url": "https://example.com/page2", 
+      "size": 300,
+      "format": "svg",
+      "filename": "qr2"
     }
-  });
-  
-  if (response.ok) {
-    const blob = await response.blob();
-    const url = URL.createObjectURL(blob);
-    
-    // Trigger download
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = \`qr-code-\${urlId}.png\`;
-    a.click();
+  ],
+  "options": {
+    "color": "000000",
+    "bgcolor": "ffffff",
+    "errorlevel": "M"
   }
-}`}</code>
-              </pre>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-3">Public QR Code Widget</h4>
-            <div className="bg-muted rounded-lg p-4">
-              <pre className="text-sm overflow-x-auto">
-                <code>{`// Embed QR code in public pages
-<img 
-  src="/api/qr-code/public/abc123?size=200&margin=2"
-  alt="QR Code for https://url.gameup.dev/abc123"
-  className="border rounded-lg"
-/>`}</code>
-              </pre>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold mb-3">Batch QR Code Generation</h4>
-            <div className="bg-muted rounded-lg p-4">
-              <pre className="text-sm overflow-x-auto">
-                <code>{`// Generate QR codes for multiple URLs
-const qrCodes = await Promise.all(
-  urlIds.map(async (id) => {
-    const response = await fetch(\`/api/qr-code/id/\${id}?format=dataurl\`, {
-      headers: { 'Authorization': \`Bearer \${apiKey}\` }
-    });
-    return response.json();
-  })
-);`}</code>
-              </pre>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+}`
+          }}
+          responses={[
+            {
+              status: 200,
+              description: "Bulk QR codes generated successfully",
+              example: `{
+  "success": true,
+  "results": [
+    {
+      "filename": "qr1",
+      "url": "https://example.com/page1",
+      "qrCode": "data:image/png;base64,iVBOR...",
+      "size": 200,
+      "format": "png"
+    },
+    {
+      "filename": "qr2", 
+      "url": "https://example.com/page2",
+      "qrCode": "<svg xmlns='http://www.w3.org/2000/svg'...",
+      "size": 300,
+      "format": "svg"
+    }
+  ],
+  "count": 2
+}`
+            },
+            {
+              status: 400,
+              description: "Invalid bulk request",
+              example: `{
+  "error": "Invalid request",
+  "message": "Maximum 50 QR codes per request"
+}`
+            }
+          ]}
+          examples={[
+            {
+              title: "Generate Multiple QR Codes",
+              request: `curl -X POST https://url.gameup.dev/api/qr/bulk \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "requests": [
+      {"url": "https://example.com/1", "filename": "qr1"},
+      {"url": "https://example.com/2", "filename": "qr2"}
+    ]
+  }'`,
+              response: `{
+  "success": true,
+  "results": [...],
+  "count": 2
+}`,
+              language: "curl"
+            }
+          ]}
+          notes={[
+            {
+              type: "warning",
+              content: "Bulk requests are limited to 50 QR codes per request to ensure optimal performance."
+            }
+          ]}
+        />
+      </DocsSection>
+    </DocsPage>
   )
 }
+
+export default QRCodesPage

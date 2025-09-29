@@ -3,562 +3,406 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
-    ArrowLeft,
     Link2,
     BarChart3,
     User,
     Key,
-    Settings
+    QrCode,
+    Zap,
+    ArrowRight,
+    CheckCircle,
+    Clock
 } from 'lucide-react'
 
 const ApiReferencePage: NextPage = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumb */}
-        <div className="flex items-center text-sm text-muted-foreground mb-8">
-          <Link href="/docs" className="hover:text-primary transition-colors">
-            Documentation
-          </Link>
-          <span className="mx-2">/</span>
-          <span>API Reference</span>
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      {/* Header */}
+      <div className="text-center space-y-4">
+        <h1 className="text-4xl font-bold text-foreground">API Reference</h1>
+        <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          Complete reference for all API endpoints with examples, authentication, and comprehensive guides for building with our URL shortening platform.
+        </p>
+        <div className="flex items-center justify-center gap-4">
+          <Badge variant="outline" className="bg-rose-50 text-rose-800 border-rose-300">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            REST API
+          </Badge>
+          <Badge variant="outline" className="bg-pink-50 text-pink-800 border-pink-300">
+            <Key className="w-3 h-3 mr-1" />
+            API Key Auth
+          </Badge>
+          <Badge variant="outline" className="bg-rose-50 text-rose-800 border-rose-300">
+            <Clock className="w-3 h-3 mr-1" />
+            Rate Limited
+          </Badge>
         </div>
+      </div>
 
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">API Reference</h1>
-          <p className="text-xl text-muted-foreground">
-            Complete reference for all API endpoints with request/response examples
+      {/* Quick Start */}
+      <Card className="border-2 border-rose-200 bg-rose-50/50">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-rose-600" />
+            Quick Start
+          </CardTitle>
+          <CardDescription>
+            Get started with the API in minutes. All endpoints require authentication via API key or session.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h4 className="font-semibold mb-2">1. Get Your API Key</h4>
+            <p className="text-sm text-muted-foreground mb-3">Create an API key from your dashboard or use session authentication.</p>
+            <div className="bg-muted rounded-lg p-3">
+              <code className="text-sm">Authorization: Bearer your-api-key</code>
+            </div>
+          </div>
+          
+          <div>
+            <h4 className="font-semibold mb-2">2. Make Your First Request</h4>
+            <div className="bg-muted rounded-lg p-4">
+              <pre className="text-sm overflow-x-auto">
+                <code>{`curl -X POST "https://url.gameup.dev/api/shorten" \\
+  -H "Authorization: Bearer your-api-key" \\
+  -H "Content-Type: application/json" \\
+  -d '{"originalUrl": "https://example.com"}'`}</code>
+              </pre>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* API Endpoints Overview */}
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-3xl font-bold mb-4">API Endpoints</h2>
+          <p className="text-muted-foreground">
+            Explore all available endpoints organized by functionality.
           </p>
         </div>
 
-        <Tabs defaultValue="url-management" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="url-management" className="flex items-center gap-2">
-              <Link2 className="h-4 w-4" />
-              URLs
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </TabsTrigger>
-            <TabsTrigger value="profile" className="flex items-center gap-2">
-              <User className="h-4 w-4" />
-              Profile
-            </TabsTrigger>
-            <TabsTrigger value="api-keys" className="flex items-center gap-2">
-              <Key className="h-4 w-4" />
-              API Keys
-            </TabsTrigger>
-            <TabsTrigger value="auth" className="flex items-center gap-2">
-              <Settings className="h-4 w-4" />
-              Auth
-            </TabsTrigger>
-          </TabsList>
-
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* URL Management */}
-          <TabsContent value="url-management">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">URL Management</h2>
-                <p className="text-muted-foreground mb-6">
-                  Create, update, and manage your shortened URLs
-                </p>
-              </div>
-
-              {/* Create Short URL */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-green-100 text-green-800">POST</Badge>
-                        /api/shorten
-                      </CardTitle>
-                      <CardDescription>Create a new shortened URL</CardDescription>
-                    </div>
-                    <Badge variant="outline">write</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Request Body</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "originalUrl": "https://example.com/very/long/url",
-  "customCode": "my-custom-code",    // Optional
-  "expiresAt": "2024-12-31T23:59:59.000Z"  // Optional
-}`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Response</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "success": true,
-  "data": {
-    "id": "uuid",
-    "shortCode": "abc123",
-    "shortUrl": "https://url.gameup.dev/abc123",
-    "originalUrl": "https://example.com/very/long/url",
-    "title": "Example Page",
-    "clicks": 0,
-    "isActive": true,
-    "expiresAt": "2024-12-31T23:59:59.000Z",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "userId": "user-uuid"
-  }
-}`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X POST https://url.gameup.dev/api/shorten \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer gup_your_api_key_here" \\
-  -d '{
-    "originalUrl": "https://example.com/very/long/url"
-  }'`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* List URLs */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-blue-100 text-blue-800">GET</Badge>
-                        /api/urls
-                      </CardTitle>
-                      <CardDescription>Get all URLs for authenticated user</CardDescription>
-                    </div>
-                    <Badge variant="outline">read</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Query Parameters</h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <code className="bg-muted px-2 py-1 rounded text-sm">page</code>
-                        <span className="text-sm text-muted-foreground">Page number (default: 1)</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <code className="bg-muted px-2 py-1 rounded text-sm">limit</code>
-                        <span className="text-sm text-muted-foreground">Items per page (default: 10, max: 100)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X GET "https://url.gameup.dev/api/urls?page=1&limit=10" \\
-  -H "Authorization: Bearer gup_your_api_key_here"`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Update URL */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-yellow-100 text-yellow-800">PUT</Badge>
-                        /api/urls/{"{id}"}
-                      </CardTitle>
-                      <CardDescription>Update an existing URL</CardDescription>
-                    </div>
-                    <Badge variant="outline">write</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Request Body</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "originalUrl": "https://example.com/updated-url",
-  "customCode": "new-custom-code",
-  "expiresAt": "2024-12-31T23:59:59.000Z"
-}`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Delete URL */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-red-100 text-red-800">DELETE</Badge>
-                        /api/urls/{"{id}"}
-                      </CardTitle>
-                      <CardDescription>Delete a URL permanently</CardDescription>
-                    </div>
-                    <Badge variant="outline">write</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <h4 className="font-semibold mb-2">Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X DELETE https://url.gameup.dev/api/urls/your-url-id \\
-  -H "Authorization: Bearer gup_your_api_key_here"`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Analytics */}
-          <TabsContent value="analytics">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Analytics</h2>
-                <p className="text-muted-foreground mb-6">
-                  Access detailed analytics and insights for your URLs
-                </p>
-              </div>
-
-              {/* Overall Analytics */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-blue-100 text-blue-800">GET</Badge>
-                        /api/analytics
-                      </CardTitle>
-                      <CardDescription>Get comprehensive analytics for all URLs</CardDescription>
-                    </div>
-                    <Badge variant="outline">read</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Response</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "success": true,
-  "data": {
-    "totalUrls": 15,
-    "totalClicks": 1250,
-    "activeUrls": 12,
-    "clicksToday": 45,
-    "clicksThisWeek": 320,
-    "clicksThisMonth": 890,
-    "topUrls": [...],
-    "clickTrends": [...],
-    "geographicData": [...],
-    "deviceData": [...],
-    "referrerData": [...]
-  }
-}`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* URL-specific Analytics */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-blue-100 text-blue-800">GET</Badge>
-                        /api/analytics/{"{id}"}
-                      </CardTitle>
-                      <CardDescription>Get analytics for a specific URL</CardDescription>
-                    </div>
-                    <Badge variant="outline">read</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <h4 className="font-semibold mb-2">Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X GET https://url.gameup.dev/api/analytics/your-url-id \\
-  -H "Authorization: Bearer gup_your_api_key_here"`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Profile */}
-          <TabsContent value="profile">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">User Profile</h2>
-                <p className="text-muted-foreground mb-6">
-                  Manage user profiles and account settings
-                </p>
-              </div>
-
-              {/* Get Profile */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-blue-100 text-blue-800">GET</Badge>
-                        /api/profile
-                      </CardTitle>
-                      <CardDescription>Get current user profile and statistics</CardDescription>
-                    </div>
-                    <Badge variant="outline">read</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <h4 className="font-semibold mb-2">Response</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "success": true,
-  "data": {
-    "profile": {
-      "id": "uuid",
-      "email": "user@example.com",
-      "full_name": "John Doe",
-      "created_at": "2024-01-01T00:00:00.000Z",
-      "updated_at": "2024-01-01T00:00:00.000Z"
-    },
-    "statistics": {
-      "total_urls": 15,
-      "active_urls": 12,
-      "total_clicks": 1250,
-      "urls_this_month": 5,
-      "average_clicks": 83
-    }
-  }
-}`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Update Profile */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Badge className="bg-yellow-100 text-yellow-800">PUT</Badge>
-                        /api/profile
-                      </CardTitle>
-                      <CardDescription>Update user profile information</CardDescription>
-                    </div>
-                    <Badge variant="outline">write</Badge>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div>
-                    <h4 className="font-semibold mb-2">Request Body</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "full_name": "Jane Doe",
-  "email": "jane@example.com"
-}`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* API Keys */}
-          <TabsContent value="api-keys">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">API Key Management</h2>
-                <p className="text-muted-foreground mb-6">
-                  Create and manage API keys for programmatic access
-                </p>
-                <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Note:</strong> API key management endpoints require session authentication for security reasons.
-                  </p>
+          <Card className="group hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-100 rounded-lg">
+                  <Link2 className="h-6 w-6 text-rose-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">URL Management</CardTitle>
+                  <Badge variant="secondary">Stable</Badge>
                 </div>
               </div>
-
-              {/* Create API Key */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Badge className="bg-green-100 text-green-800">POST</Badge>
-                    /api/api-keys
-                  </CardTitle>
-                  <CardDescription>Create a new API key</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Request Body</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "name": "My Integration Key",
-  "scopes": ["read", "write"],
-  "expiresAt": "2024-12-31T23:59:59.000Z"
-}`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Response</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`{
-  "success": true,
-  "message": "API key created successfully",
-  "data": {
-    "id": "uuid",
-    "name": "My Integration Key",
-    "key": "gup_1234567890abcdef...",
-    "keyPrefix": "gup_123456...",
-    "scopes": ["read", "write"],
-    "expiresAt": "2024-12-31T23:59:59.000Z",
-    "lastUsedAt": null,
-    "usageCount": 0,
-    "isActive": true,
-    "createdAt": "2024-01-01T00:00:00.000Z"
-  }
-}`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* List API Keys */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Badge className="bg-blue-100 text-blue-800">GET</Badge>
-                    /api/api-keys
-                  </CardTitle>
-                  <CardDescription>Get all your API keys</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Returns a list of all API keys for the authenticated user with usage statistics.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Authentication */}
-          <TabsContent value="auth">
-            <div className="space-y-8">
-              <div>
-                <h2 className="text-2xl font-bold mb-4">Authentication</h2>
-                <p className="text-muted-foreground mb-6">
-                  Learn about API authentication and security
-                </p>
+              <CardDescription>
+                Complete CRUD operations for shortened URLs with advanced features.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">POST</Badge>
+                  <code>/api/urls</code>
+                  <span className="text-muted-foreground">- Create URLs</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">GET</Badge>
+                  <code>/api/urls</code>
+                  <span className="text-muted-foreground">- List URLs</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">PUT</Badge>
+                  <code>/api/urls/{`{id}`}</code>
+                  <span className="text-muted-foreground">- Update URLs</span>
+                </div>
               </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/api-reference/urls">
+                  View Documentation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>API Key Scopes</CardTitle>
-                  <CardDescription>
-                    API keys have different scopes that control access permissions
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-muted rounded">
-                      <div>
-                        <code className="font-semibold">read</code>
-                        <p className="text-sm text-muted-foreground">View URLs, analytics, and profile data</p>
-                      </div>
-                      <Badge variant="outline">Safe</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted rounded">
-                      <div>
-                        <code className="font-semibold">write</code>
-                        <p className="text-sm text-muted-foreground">Create, update, and delete URLs; update profile</p>
-                      </div>
-                      <Badge variant="outline">Caution</Badge>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-muted rounded">
-                      <div>
-                        <code className="font-semibold">admin</code>
-                        <p className="text-sm text-muted-foreground">Full access to all operations (future use)</p>
-                      </div>
-                      <Badge variant="destructive">Dangerous</Badge>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          {/* Simple Shorten */}
+          <Card className="group hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <Zap className="h-6 w-6 text-pink-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Simple Shorten</CardTitle>
+                  <Badge variant="secondary">Stable</Badge>
+                </div>
+              </div>
+              <CardDescription>
+                Quick and simple URL shortening with minimal configuration.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">POST</Badge>
+                  <code>/api/shorten</code>
+                  <span className="text-muted-foreground">- Quick shorten</span>
+                </div>
+                <p className="text-xs text-muted-foreground">Perfect for simple integrations and prototypes.</p>
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/api-reference/shorten">
+                  View Documentation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-              <Card>
-                <CardHeader>
-                  <CardTitle>Security Best Practices</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-2 text-sm">
-                    <li>• Store API keys securely - never expose them in client-side code</li>
-                    <li>• Use environment variables for key storage</li>
-                    <li>• Rotate keys regularly</li>
-                    <li>• Use appropriate scopes - grant minimum permissions needed</li>
-                    <li>• Monitor usage and revoke compromised keys immediately</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+          {/* QR Codes */}
+          <Card className="group hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-100 rounded-lg">
+                  <QrCode className="h-6 w-6 text-rose-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">QR Codes</CardTitle>
+                  <Badge variant="secondary">Stable</Badge>
+                </div>
+              </div>
+              <CardDescription>
+                Generate customizable QR codes with multiple output formats.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">GET</Badge>
+                  <code>/api/qr-code/{`{code}`}</code>
+                  <span className="text-muted-foreground">- Generate QR</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">POST</Badge>
+                  <code>/api/qr-code/generate</code>
+                  <Badge variant="outline" className="bg-pink-50 text-pink-800 border-pink-300 text-xs ml-auto">Beta</Badge>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/api-reference/qr-codes">
+                  View Documentation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-12 pt-8 border-t">
-          <Button variant="ghost" asChild>
-            <Link href="/docs">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Documentation
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/docs/examples">
-              View Examples
-            </Link>
-          </Button>
+          {/* Analytics */}
+          <Card className="group hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <BarChart3 className="h-6 w-6 text-pink-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Analytics</CardTitle>
+                  <Badge variant="secondary">Stable</Badge>
+                </div>
+              </div>
+              <CardDescription>
+                Comprehensive analytics and reporting for click tracking.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">GET</Badge>
+                  <code>/api/analytics</code>
+                  <span className="text-muted-foreground">- Overview</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">GET</Badge>
+                  <code>/api/analytics/{`{id}`}</code>
+                  <span className="text-muted-foreground">- URL stats</span>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/api-reference/analytics">
+                  View Documentation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Profile */}
+          <Card className="group hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-rose-100 rounded-lg">
+                  <User className="h-6 w-6 text-rose-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">Profile</CardTitle>
+                  <Badge variant="secondary">Stable</Badge>
+                </div>
+              </div>
+              <CardDescription>
+                Manage user profiles and account information.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">GET</Badge>
+                  <code>/api/profile</code>
+                  <span className="text-muted-foreground">- Get profile</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">PUT</Badge>
+                  <code>/api/profile</code>
+                  <span className="text-muted-foreground">- Update profile</span>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/api-reference/profile">
+                  View Documentation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* API Keys */}
+          <Card className="group hover:shadow-md transition-shadow">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <Key className="h-6 w-6 text-pink-600" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">API Keys</CardTitle>
+                  <Badge variant="secondary">Stable</Badge>
+                </div>
+              </div>
+              <CardDescription>
+                Create and manage API keys for programmatic access.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">GET</Badge>
+                  <code>/api/api-keys</code>
+                  <span className="text-muted-foreground">- List keys</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-xs">POST</Badge>
+                  <code>/api/api-keys</code>
+                  <span className="text-muted-foreground">- Create key</span>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/api-reference/api-keys">
+                  View Documentation
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </div>
+
+      {/* Common Concepts */}
+      <div className="space-y-8">
+        <div>
+          <h2 className="text-3xl font-bold mb-4">Common Concepts</h2>
+          <p className="text-muted-foreground">
+            Important concepts that apply across all API endpoints.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Authentication</CardTitle>
+              <CardDescription>
+                How to authenticate your API requests
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-2 text-sm">
+                <div className="flex items-center gap-2">
+                  <Key className="h-4 w-4 text-rose-600" />
+                  <span><strong>API Keys:</strong> Bearer token authentication</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-pink-600" />
+                  <span><strong>Sessions:</strong> Cookie-based dashboard authentication</span>
+                </div>
+              </div>
+              <Button asChild variant="outline" size="sm" className="w-full">
+                <Link href="/docs/authentication">
+                  Learn About Authentication
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Rate Limiting</CardTitle>
+              <CardDescription>
+                Understanding API usage limits and best practices
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span>Standard endpoints:</span>
+                  <code>100 req/min</code>
+                </div>
+                <div className="flex justify-between">
+                  <span>QR generation:</span>
+                  <code>40 req/min</code>
+                </div>
+                <div className="flex justify-between">
+                  <span>Public endpoints:</span>
+                  <code>50 req/min</code>
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">Limits are per IP address or authenticated user.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Next Steps */}
+      <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Ready to Start Building?</CardTitle>
+          <CardDescription>
+            Get your API key and start building amazing applications with our URL shortening platform.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button asChild>
+            <Link href="/dashboard/settings">
+              Get API Key
+              <Key className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/docs/getting-started">
+              Getting Started Guide
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   )
 }

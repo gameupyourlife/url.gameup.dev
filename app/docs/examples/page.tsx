@@ -1,622 +1,821 @@
 import { NextPage } from 'next'
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-    ArrowLeft
-} from 'lucide-react'
+import { Code, BookOpen, Rocket, Terminal } from 'lucide-react'
+import { DocsPage, DocsSection, OverviewCard } from '@/components/docs/docs-layout'
+import { CodeBlock } from '@/components/docs/code-block'
 
 const ExamplesPage: NextPage = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Breadcrumb */}
-        <div className="flex items-center text-sm text-muted-foreground mb-8">
-          <Link href="/docs" className="hover:text-primary transition-colors">
-            Documentation
-          </Link>
-          <span className="mx-2">/</span>
-          <span>Examples</span>
+    <DocsPage
+      title="Code Examples"
+      description="Practical code examples and SDK implementations to get you started with the URL Shortener API quickly."
+      icon={<Code className="h-8 w-8 text-rose-600" />}
+      status="Stable"
+    >
+      {/* Overview */}
+      <DocsSection
+        title="SDK & Language Examples"
+        description="Complete implementations in popular programming languages"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <OverviewCard
+            title="JavaScript/Node.js"
+            description="Modern JavaScript SDK with TypeScript support"
+            icon={<Code className="h-6 w-6 text-rose-600" />}
+            features={[
+              "Full TypeScript support",
+              "Promise-based API",
+              "Built-in error handling",
+              "Comprehensive examples"
+            ]}
+          />
+          <OverviewCard
+            title="Python SDK"
+            description="Pythonic interface with requests library"
+            icon={<Terminal className="h-6 w-6 text-pink-600" />}
+            features={[
+              "Requests-based client",
+              "Type hints included",
+              "Exception handling",
+              "Async/await support"
+            ]}
+          />
+          <OverviewCard
+            title="PHP Client"
+            description="PSR-compliant PHP client library"
+            icon={<BookOpen className="h-6 w-6 text-rose-600" />}
+            features={[
+              "PSR-4 autoloading",
+              "Guzzle HTTP client",
+              "Full API coverage",
+              "Laravel integration"
+            ]}
+          />
+          <OverviewCard
+            title="cURL Examples"
+            description="Direct HTTP API integration examples"
+            icon={<Rocket className="h-6 w-6 text-pink-600" />}
+            features={[
+              "Raw HTTP requests",
+              "Shell script examples",
+              "Authentication patterns",
+              "Error handling"
+            ]}
+          />
         </div>
+      </DocsSection>
 
-        {/* Header */}
-        <div className="mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Code Examples</h1>
-          <p className="text-xl text-muted-foreground">
-            Practical examples to get you started with the URL Shortener API
-          </p>
-        </div>
+      {/* JavaScript/Node.js Examples */}
+      <DocsSection
+        title="JavaScript/Node.js"
+        description="Complete JavaScript implementation with modern async/await syntax"
+      >
+        <div className="space-y-8">
+          <div>
+            <h3 className="text-xl font-semibold mb-4">SDK Installation</h3>
+            <CodeBlock
+              language="bash"
+              code={`npm install @gameup/url-shortener
+# or
+yarn add @gameup/url-shortener`}
+            />
+          </div>
 
-        <Tabs defaultValue="javascript" className="space-y-8">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="javascript">JavaScript</TabsTrigger>
-            <TabsTrigger value="python">Python</TabsTrigger>
-            <TabsTrigger value="php">PHP</TabsTrigger>
-            <TabsTrigger value="curl">cURL</TabsTrigger>
-          </TabsList>
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Basic Setup</h3>
+            <CodeBlock
+              language="javascript"
+              code={`import { URLShortener } from '@gameup/url-shortener';
 
-          {/* JavaScript Examples */}
-          <TabsContent value="javascript">
-            <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>JavaScript/Node.js SDK</CardTitle>
-                  <CardDescription>
-                    Complete JavaScript implementation for interacting with the API
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Basic Setup</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`class URLShortenerAPI {
-  constructor(apiKey, baseUrl = 'https://url.gameup.dev/api') {
-    this.apiKey = apiKey;
-    this.baseUrl = baseUrl;
-  }
+// Initialize the client
+const client = new URLShortener({
+  apiKey: 'your-api-key-here',
+  baseURL: 'https://url.gameup.dev/api'
+});
 
-  async request(endpoint, options = {}) {
-    const url = \`\${this.baseUrl}\${endpoint}\`;
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': \`Bearer \${this.apiKey}\`,
-        ...options.headers,
-      },
-      ...options,
-    };
+// Or use environment variables
+const client = new URLShortener({
+  apiKey: process.env.URL_SHORTENER_API_KEY
+});`}
+            />
+          </div>
 
-    const response = await fetch(url, config);
-    const data = await response.json();
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Create Short URL</h3>
+            <CodeBlock
+              language="javascript"
+              code={`async function createShortUrl() {
+  try {
+    const result = await client.shorten({
+      url: 'https://example.com/very-long-url',
+      alias: 'my-link',
+      title: 'My Awesome Link',
+      expiresAt: '2024-12-31T23:59:59Z'
+    });
     
-    if (!data.success) {
-      throw new Error(data.error || 'API request failed');
-    }
-    
-    return data;
-  }
-
-  // Shorten a URL
-  async shortenUrl(originalUrl, customCode = null, expiresAt = null) {
-    return this.request('/shorten', {
-      method: 'POST',
-      body: JSON.stringify({
-        originalUrl,
-        customCode,
-        expiresAt
-      })
-    });
-  }
-
-  // Get all URLs
-  async getUrls(page = 1, limit = 10) {
-    return this.request(\`/urls?page=\${page}&limit=\${limit}\`);
-  }
-
-  // Get URL by ID
-  async getUrl(id) {
-    return this.request(\`/urls/\${id}\`);
-  }
-
-  // Update URL
-  async updateUrl(id, updates) {
-    return this.request(\`/urls/\${id}\`, {
-      method: 'PUT',
-      body: JSON.stringify(updates)
-    });
-  }
-
-  // Delete URL
-  async deleteUrl(id) {
-    return this.request(\`/urls/\${id}\`, {
-      method: 'DELETE'
-    });
-  }
-
-  // Get analytics
-  async getAnalytics() {
-    return this.request('/analytics');
-  }
-
-  // Get URL analytics
-  async getUrlAnalytics(id) {
-    return this.request(\`/analytics/\${id}\`);
+    console.log('Short URL created:', result.shortUrl);
+    console.log('Short code:', result.shortCode);
+    return result;
+  } catch (error) {
+    console.error('Error creating short URL:', error.message);
+    throw error;
   }
 }`}
-                      </pre>
-                    </div>
-                  </div>
+            />
+          </div>
 
-                  <div>
-                    <h4 className="font-semibold mb-2">Usage Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`const api = new URLShortenerAPI('gup_your_api_key_here');
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Bulk URL Creation</h3>
+            <CodeBlock
+              language="javascript"
+              code={`async function createBulkUrls() {
+  const urls = [
+    { url: 'https://example.com/page1', title: 'Page 1' },
+    { url: 'https://example.com/page2', title: 'Page 2' },
+    { url: 'https://example.com/page3', title: 'Page 3' }
+  ];
 
-// Shorten a URL
-try {
-  const result = await api.shortenUrl('https://example.com/very/long/url');
-  console.log('Short URL:', result.data.shortUrl);
-} catch (error) {
-  console.error('Error:', error.message);
+  try {
+    const result = await client.bulkShorten({ urls });
+    
+    console.log(\`Created \${result.successful} URLs successfully\`);
+    result.results.forEach((item, index) => {
+      if (item.success) {
+        console.log(\`URL \${index + 1}: \${item.data.shortUrl}\`);
+      } else {
+        console.error(\`URL \${index + 1} failed: \${item.error}\`);
+      }
+    });
+    
+    return result;
+  } catch (error) {
+    console.error('Bulk creation failed:', error.message);
+    throw error;
+  }
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Get Analytics</h3>
+            <CodeBlock
+              language="javascript"
+              code={`async function getUrlAnalytics(shortCode) {
+  try {
+    const analytics = await client.getAnalytics(shortCode, {
+      period: '30d',
+      includeDetails: true
+    });
+    
+    console.log('Total clicks:', analytics.totalClicks);
+    console.log('Unique clicks:', analytics.uniqueClicks);
+    console.log('Top countries:', analytics.countries);
+    console.log('Top referrers:', analytics.referrers);
+    
+    return analytics;
+  } catch (error) {
+    console.error('Error fetching analytics:', error.message);
+    throw error;
+  }
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Complete Example with Error Handling</h3>
+            <CodeBlock
+              language="javascript"
+              code={`import { URLShortener, URLShortenerError } from '@gameup/url-shortener';
+
+class URLManager {
+  constructor(apiKey) {
+    this.client = new URLShortener({ apiKey });
+  }
+
+  async createUrl(originalUrl, options = {}) {
+    try {
+      // Validate URL first
+      const validation = await this.client.validateUrl(originalUrl);
+      if (!validation.valid) {
+        throw new Error(\`Invalid URL: \${validation.error}\`);
+      }
+
+      // Create short URL
+      const shortUrl = await this.client.shorten({
+        url: originalUrl,
+        ...options
+      });
+
+      // Generate QR code
+      const qrCode = await this.client.generateQR(shortUrl.shortCode);
+
+      return {
+        ...shortUrl,
+        qrCode: qrCode.url
+      };
+    } catch (error) {
+      if (error instanceof URLShortenerError) {
+        // Handle API-specific errors
+        switch (error.code) {
+          case 'ALIAS_TAKEN':
+            throw new Error('Custom alias is already in use');
+          case 'INVALID_URL':
+            throw new Error('The provided URL is not valid');
+          case 'RATE_LIMIT_EXCEEDED':
+            throw new Error('Rate limit exceeded. Please try again later');
+          default:
+            throw new Error(\`API Error: \${error.message}\`);
+        }
+      }
+      throw error;
+    }
+  }
+
+  async getUrlStats(shortCode) {
+    try {
+      const [details, analytics] = await Promise.all([
+        this.client.getUrl(shortCode),
+        this.client.getAnalytics(shortCode)
+      ]);
+
+      return {
+        ...details,
+        analytics
+      };
+    } catch (error) {
+      console.error('Error fetching URL stats:', error);
+      throw error;
+    }
+  }
 }
 
-// Get all URLs with pagination
-const urls = await api.getUrls(1, 20);
-console.log('Total URLs:', urls.data.pagination.total);
+// Usage
+const urlManager = new URLManager(process.env.API_KEY);
 
-// Get analytics
-const analytics = await api.getAnalytics();
-console.log('Total clicks:', analytics.data.totalClicks);`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">React Hook Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`import { useState, useEffect } from 'react';
-
-const useUrlShortener = (apiKey) => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const api = new URLShortenerAPI(apiKey);
-
-  const shortenUrl = async (originalUrl) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const result = await api.shortenUrl(originalUrl);
-      return result.data;
-    } catch (err) {
-      setError(err.message);
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return { shortenUrl, loading, error };
-};
-
-// Usage in component
-const MyComponent = () => {
-  const { shortenUrl, loading, error } = useUrlShortener('gup_your_api_key');
-  
-  const handleShorten = async () => {
-    try {
-      const shortUrl = await shortenUrl('https://example.com');
-      console.log('Created:', shortUrl.shortUrl);
-    } catch (error) {
-      console.error('Failed to shorten URL');
-    }
-  };
-
-  return (
-    <button onClick={handleShorten} disabled={loading}>
-      {loading ? 'Shortening...' : 'Shorten URL'}
-    </button>
-  );
-};`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Python Examples */}
-          <TabsContent value="python">
-            <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Python SDK</CardTitle>
-                  <CardDescription>
-                    Python implementation using the requests library
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Python Class</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`import requests
-from typing import Optional, Dict, List
-import json
-
-class URLShortenerAPI:
-    def __init__(self, api_key: str, base_url: str = "https://url.gameup.dev/api"):
-        self.api_key = api_key
-        self.base_url = base_url
-        self.session = requests.Session()
-        self.session.headers.update({
-            'Authorization': f'Bearer {api_key}',
-            'Content-Type': 'application/json'
-        })
+async function main() {
+  try {
+    const result = await urlManager.createUrl('https://example.com', {
+      alias: 'example-link',
+      title: 'Example Website'
+    });
     
-    def _request(self, method: str, endpoint: str, **kwargs) -> Dict:
-        url = f"{self.base_url}{endpoint}"
-        response = self.session.request(method, url, **kwargs)
+    console.log('Created:', result.shortUrl);
+    console.log('QR Code:', result.qrCode);
+  } catch (error) {
+    console.error('Failed to create URL:', error.message);
+  }
+}
+
+main();`}
+            />
+          </div>
+        </div>
+      </DocsSection>
+
+      {/* Python Examples */}
+      <DocsSection
+        title="Python"
+        description="Python SDK with requests library and comprehensive error handling"
+      >
+        <div className="space-y-8">
+          <div>
+            <h3 className="text-xl font-semibold mb-4">SDK Installation</h3>
+            <CodeBlock
+              language="bash"
+              code={`pip install gameup-url-shortener
+# or
+poetry add gameup-url-shortener`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Basic Setup</h3>
+            <CodeBlock
+              language="python"
+              code={`from gameup_url_shortener import URLShortener
+import asyncio
+from datetime import datetime, timedelta
+
+# Initialize the client
+client = URLShortener(api_key="your-api-key-here")
+
+# Or use environment variables
+import os
+client = URLShortener(api_key=os.getenv("URL_SHORTENER_API_KEY"))`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Create Short URL</h3>
+            <CodeBlock
+              language="python"
+              code={`def create_short_url():
+    try:
+        result = client.shorten(
+            url="https://example.com/very-long-url",
+            alias="my-python-link",
+            title="My Python Link",
+            expires_at=(datetime.now() + timedelta(days=30)).isoformat()
+        )
         
+        print(f"Short URL created: {result['shortUrl']}")
+        print(f"Short code: {result['shortCode']}")
+        return result
+    except Exception as error:
+        print(f"Error creating short URL: {error}")
+        raise`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Async/Await Support</h3>
+            <CodeBlock
+              language="python"
+              code={`import asyncio
+from gameup_url_shortener import AsyncURLShortener
+
+async def async_example():
+    async_client = AsyncURLShortener(api_key="your-api-key")
+    
+    try:
+        # Create multiple URLs concurrently
+        urls = [
+            "https://example.com/page1",
+            "https://example.com/page2",
+            "https://example.com/page3"
+        ]
+        
+        tasks = [
+            async_client.shorten(url=url, title=f"Page {i+1}")
+            for i, url in enumerate(urls)
+        ]
+        
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+        
+        for i, result in enumerate(results):
+            if isinstance(result, Exception):
+                print(f"URL {i+1} failed: {result}")
+            else:
+                print(f"URL {i+1}: {result['shortUrl']}")
+                
+    except Exception as error:
+        print(f"Async operation failed: {error}")
+    finally:
+        await async_client.close()
+
+# Run async example
+asyncio.run(async_example())`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Complete Class Example</h3>
+            <CodeBlock
+              language="python"
+              code={`from gameup_url_shortener import URLShortener, URLShortenerError
+from typing import Optional, Dict, Any
+import logging
+
+class URLManager:
+    def __init__(self, api_key: str):
+        self.client = URLShortener(api_key=api_key)
+        self.logger = logging.getLogger(__name__)
+    
+    def create_url(self, 
+                   original_url: str, 
+                   alias: Optional[str] = None,
+                   title: Optional[str] = None,
+                   **kwargs) -> Dict[str, Any]:
         try:
-            data = response.json()
-        except json.JSONDecodeError:
-            raise Exception(f"Invalid JSON response: {response.text}")
-        
-        if not data.get('success', False):
-            raise Exception(data.get('error', 'API request failed'))
-        
-        return data
-    
-    def shorten_url(self, original_url: str, custom_code: Optional[str] = None, 
-                   expires_at: Optional[str] = None) -> Dict:
-        payload = {'originalUrl': original_url}
-        if custom_code:
-            payload['customCode'] = custom_code
-        if expires_at:
-            payload['expiresAt'] = expires_at
-        
-        return self._request('POST', '/shorten', json=payload)
-    
-    def get_urls(self, page: int = 1, limit: int = 10) -> Dict:
-        return self._request('GET', f'/urls?page={page}&limit={limit}')
-    
-    def get_url(self, url_id: str) -> Dict:
-        return self._request('GET', f'/urls/{url_id}')
-    
-    def update_url(self, url_id: str, **updates) -> Dict:
-        return self._request('PUT', f'/urls/{url_id}', json=updates)
-    
-    def delete_url(self, url_id: str) -> Dict:
-        return self._request('DELETE', f'/urls/{url_id}')
-    
-    def get_analytics(self) -> Dict:
-        return self._request('GET', '/analytics')
-    
-    def get_url_analytics(self, url_id: str) -> Dict:
-        return self._request('GET', f'/analytics/{url_id}')`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Usage Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`# Initialize the API client
-api = URLShortenerAPI('gup_your_api_key_here')
-
-try:
-    # Shorten a URL
-    result = api.shorten_url('https://example.com/very/long/url')
-    short_url = result['data']['shortUrl']
-    print(f"Short URL: {short_url}")
-    
-    # Get all URLs
-    urls = api.get_urls(page=1, limit=50)
-    print(f"Total URLs: {urls['data']['pagination']['total']}")
-    
-    # Get analytics
-    analytics = api.get_analytics()
-    print(f"Total clicks: {analytics['data']['totalClicks']}")
-    
-    # Update a URL
-    url_id = result['data']['id']
-    updated = api.update_url(url_id, originalUrl='https://updated-example.com')
-    print("URL updated successfully")
-    
-except Exception as e:
-    print(f"Error: {e}")`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Bulk Operations Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`def bulk_shorten_urls(api: URLShortenerAPI, urls: List[str]) -> List[Dict]:
-    """Shorten multiple URLs with error handling"""
-    results = []
-    
-    for url in urls:
-        try:
-            result = api.shorten_url(url)
-            results.append({
-                'original': url,
-                'short': result['data']['shortUrl'],
-                'success': True
-            })
-            print(f"✓ Shortened: {url}")
+            # Validate URL first
+            validation = self.client.validate_url(original_url)
+            if not validation["valid"]:
+                raise ValueError(f"Invalid URL: {validation.get('error', 'Unknown error')}")
+            
+            # Create short URL
+            result = self.client.shorten(
+                url=original_url,
+                alias=alias,
+                title=title,
+                **kwargs
+            )
+            
+            self.logger.info(f"Created short URL: {result['shortCode']}")
+            return result
+            
+        except URLShortenerError as e:
+            error_msg = self._handle_api_error(e)
+            self.logger.error(f"API Error: {error_msg}")
+            raise ValueError(error_msg)
         except Exception as e:
-            results.append({
-                'original': url,
-                'error': str(e),
-                'success': False
-            })
-            print(f"✗ Failed: {url} - {e}")
+            self.logger.error(f"Unexpected error: {e}")
+            raise
     
-    return results
-
-# Usage
-urls_to_shorten = [
-    'https://example.com/page1',
-    'https://example.com/page2',
-    'https://example.com/page3'
-]
-
-results = bulk_shorten_urls(api, urls_to_shorten)
-successful = [r for r in results if r['success']]
-print(f"Successfully shortened {len(successful)} out of {len(urls_to_shorten)} URLs")`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* PHP Examples */}
-          <TabsContent value="php">
-            <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>PHP SDK</CardTitle>
-                  <CardDescription>
-                    PHP implementation using cURL for HTTP requests
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">PHP Class</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`<?php
-class URLShortenerAPI {
-    private $apiKey;
-    private $baseUrl;
+    def _handle_api_error(self, error: URLShortenerError) -> str:
+        error_mappings = {
+            "ALIAS_TAKEN": "Custom alias is already in use",
+            "INVALID_URL": "The provided URL is not valid",
+            "RATE_LIMIT_EXCEEDED": "Rate limit exceeded. Please try again later",
+            "UNAUTHORIZED": "Invalid API key or insufficient permissions"
+        }
+        return error_mappings.get(error.code, f"API Error: {error.message}")
     
-    public function __construct($apiKey, $baseUrl = 'https://url.gameup.dev/api') {
-        $this->apiKey = $apiKey;
-        $this->baseUrl = $baseUrl;
-    }
+    def get_analytics(self, short_code: str, period: str = "30d") -> Dict[str, Any]:
+        try:
+            return self.client.get_analytics(short_code, period=period)
+        except URLShortenerError as e:
+            if e.code == "NOT_FOUND":
+                raise ValueError(f"Short URL '{short_code}' not found")
+            raise ValueError(self._handle_api_error(e))
+
+# Usage example
+if __name__ == "__main__":
+    import os
     
-    private function request($method, $endpoint, $data = null) {
-        $url = $this->baseUrl . $endpoint;
-        $headers = [
-            'Authorization: Bearer ' . $this->apiKey,
-            'Content-Type: application/json'
-        ];
+    manager = URLManager(os.getenv("URL_SHORTENER_API_KEY"))
+    
+    try:
+        result = manager.create_url(
+            "https://example.com",
+            alias="python-example",
+            title="Python Example"
+        )
+        print(f"Success: {result['shortUrl']}")
         
-        $ch = curl_init();
-        curl_setopt_array($ch, [
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_SSL_VERIFYPEER => true,
+        # Get analytics
+        analytics = manager.get_analytics(result["shortCode"])
+        print(f"Clicks: {analytics['totalClicks']}")
+        
+    except ValueError as e:
+        print(f"Error: {e}")`}
+            />
+          </div>
+        </div>
+      </DocsSection>
+
+      {/* PHP Examples */}
+      <DocsSection
+        title="PHP"
+        description="PSR-compliant PHP client with Guzzle HTTP support"
+      >
+        <div className="space-y-8">
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Composer Installation</h3>
+            <CodeBlock
+              language="bash"
+              code={`composer require gameup/url-shortener`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Basic Setup</h3>
+            <CodeBlock
+              language="php"
+              code={`<?php
+require_once 'vendor/autoload.php';
+
+use GameUp\\URLShortener\\Client;
+use GameUp\\URLShortener\\Exception\\URLShortenerException;
+
+// Initialize the client
+$client = new Client([
+    'api_key' => 'your-api-key-here',
+    'base_uri' => 'https://url.gameup.dev/api'
+]);
+
+// Or use environment variables
+$client = new Client([
+    'api_key' => $_ENV['URL_SHORTENER_API_KEY']
+]);`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Create Short URL</h3>
+            <CodeBlock
+              language="php"
+              code={`<?php
+function createShortUrl($client) {
+    try {
+        $result = $client->shorten([
+            'url' => 'https://example.com/very-long-url',
+            'alias' => 'my-php-link',
+            'title' => 'My PHP Link',
+            'expiresAt' => (new DateTime('+30 days'))->format('c')
         ]);
         
-        if ($data !== null) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+        echo "Short URL created: " . $result['data']['shortUrl'] . "\\n";
+        echo "Short code: " . $result['data']['shortCode'] . "\\n";
+        
+        return $result['data'];
+    } catch (URLShortenerException $e) {
+        echo "Error creating short URL: " . $e->getMessage() . "\\n";
+        throw $e;
+    }
+}`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Complete Class Example</h3>
+            <CodeBlock
+              language="php"
+              code={`<?php
+namespace App\\Services;
+
+use GameUp\\URLShortener\\Client;
+use GameUp\\URLShortener\\Exception\\URLShortenerException;
+use Psr\\Log\\LoggerInterface;
+
+class URLManager 
+{
+    private Client $client;
+    private LoggerInterface $logger;
+    
+    public function __construct(string $apiKey, LoggerInterface $logger) 
+    {
+        $this->client = new Client(['api_key' => $apiKey]);
+        $this->logger = $logger;
+    }
+    
+    public function createUrl(string $originalUrl, array $options = []): array 
+    {
+        try {
+            // Validate URL first
+            $validation = $this->client->validateUrl($originalUrl);
+            if (!$validation['data']['valid']) {
+                throw new \\InvalidArgumentException(
+                    'Invalid URL: ' . ($validation['data']['error'] ?? 'Unknown error')
+                );
+            }
+            
+            // Create short URL
+            $result = $this->client->shorten(array_merge([
+                'url' => $originalUrl
+            ], $options));
+            
+            $this->logger->info('Created short URL', [
+                'short_code' => $result['data']['shortCode'],
+                'original_url' => $originalUrl
+            ]);
+            
+            return $result['data'];
+            
+        } catch (URLShortenerException $e) {
+            $errorMsg = $this->handleApiError($e);
+            $this->logger->error('API Error', ['error' => $errorMsg]);
+            throw new \\RuntimeException($errorMsg);
         }
+    }
+    
+    private function handleApiError(URLShortenerException $e): string 
+    {
+        $errorMappings = [
+            'ALIAS_TAKEN' => 'Custom alias is already in use',
+            'INVALID_URL' => 'The provided URL is not valid',
+            'RATE_LIMIT_EXCEEDED' => 'Rate limit exceeded. Please try again later',
+            'UNAUTHORIZED' => 'Invalid API key or insufficient permissions'
+        ];
         
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        
-        if (curl_error($ch)) {
-            throw new Exception('cURL error: ' . curl_error($ch));
+        return $errorMappings[$e->getCode()] ?? 'API Error: ' . $e->getMessage();
+    }
+    
+    public function getAnalytics(string $shortCode, string $period = '30d'): array 
+    {
+        try {
+            $result = $this->client->getAnalytics($shortCode, ['period' => $period]);
+            return $result['data'];
+        } catch (URLShortenerException $e) {
+            if ($e->getCode() === 'NOT_FOUND') {
+                throw new \\InvalidArgumentException("Short URL '$shortCode' not found");
+            }
+            throw new \\RuntimeException($this->handleApiError($e));
         }
-        
-        curl_close($ch);
-        
-        $decodedResponse = json_decode($response, true);
-        
-        if ($httpCode >= 400 || !$decodedResponse['success']) {
-            throw new Exception($decodedResponse['error'] ?? 'API request failed');
+    }
+    
+    public function bulkCreate(array $urls): array 
+    {
+        try {
+            $result = $this->client->bulkShorten(['urls' => $urls]);
+            
+            $this->logger->info('Bulk creation completed', [
+                'total' => $result['data']['total'],
+                'successful' => $result['data']['successful'],
+                'failed' => $result['data']['failed']
+            ]);
+            
+            return $result['data'];
+        } catch (URLShortenerException $e) {
+            $this->logger->error('Bulk creation failed', ['error' => $e->getMessage()]);
+            throw new \\RuntimeException($this->handleApiError($e));
         }
-        
-        return $decodedResponse;
-    }
-    
-    public function shortenUrl($originalUrl, $customCode = null, $expiresAt = null) {
-        $data = ['originalUrl' => $originalUrl];
-        if ($customCode) $data['customCode'] = $customCode;
-        if ($expiresAt) $data['expiresAt'] = $expiresAt;
-        
-        return $this->request('POST', '/shorten', $data);
-    }
-    
-    public function getUrls($page = 1, $limit = 10) {
-        return $this->request('GET', "/urls?page=$page&limit=$limit");
-    }
-    
-    public function getUrl($id) {
-        return $this->request('GET', "/urls/$id");
-    }
-    
-    public function updateUrl($id, $updates) {
-        return $this->request('PUT', "/urls/$id", $updates);
-    }
-    
-    public function deleteUrl($id) {
-        return $this->request('DELETE', "/urls/$id");
-    }
-    
-    public function getAnalytics() {
-        return $this->request('GET', '/analytics');
-    }
-    
-    public function getUrlAnalytics($id) {
-        return $this->request('GET', "/analytics/$id");
     }
 }
-?>`}
-                      </pre>
-                    </div>
-                  </div>
 
-                  <div>
-                    <h4 className="font-semibold mb-2">Usage Example</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`<?php
-$api = new URLShortenerAPI('gup_your_api_key_here');
+// Usage example
+$urlManager = new URLManager($_ENV['URL_SHORTENER_API_KEY'], $logger);
 
 try {
-    // Shorten a URL
-    $result = $api->shortenUrl('https://example.com/very/long/url');
-    echo "Short URL: " . $result['data']['shortUrl'] . "\\n";
+    $result = $urlManager->createUrl('https://example.com', [
+        'alias' => 'php-example',
+        'title' => 'PHP Example'
+    ]);
     
-    // Get all URLs
-    $urls = $api->getUrls(1, 20);
-    echo "Total URLs: " . $urls['data']['pagination']['total'] . "\\n";
+    echo "Success: " . $result['shortUrl'] . "\\n";
     
     // Get analytics
-    $analytics = $api->getAnalytics();
-    echo "Total clicks: " . $analytics['data']['totalClicks'] . "\\n";
+    $analytics = $urlManager->getAnalytics($result['shortCode']);
+    echo "Clicks: " . $analytics['totalClicks'] . "\\n";
     
 } catch (Exception $e) {
     echo "Error: " . $e->getMessage() . "\\n";
-}
-?>`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* cURL Examples */}
-          <TabsContent value="curl">
-            <div className="space-y-8">
-              <Card>
-                <CardHeader>
-                  <CardTitle>cURL Examples</CardTitle>
-                  <CardDescription>
-                    Direct HTTP requests using cURL command line tool
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div>
-                    <h4 className="font-semibold mb-2">Shorten URL</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X POST https://url.gameup.dev/api/shorten \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer gup_your_api_key_here" \\
-  -d '{
-    "originalUrl": "https://example.com/very/long/url",
-    "customCode": "my-custom-code"
-  }'`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Get URLs with Pagination</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X GET "https://url.gameup.dev/api/urls?page=1&limit=50" \\
-  -H "Authorization: Bearer gup_your_api_key_here"`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Get Analytics</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X GET https://url.gameup.dev/api/analytics \\
-  -H "Authorization: Bearer gup_your_api_key_here"`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Update URL</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X PUT https://url.gameup.dev/api/urls/your-url-id \\
-  -H "Content-Type: application/json" \\
-  -H "Authorization: Bearer gup_your_api_key_here" \\
-  -d '{
-    "originalUrl": "https://example.com/updated-url"
-  }'`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Delete URL</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X DELETE https://url.gameup.dev/api/urls/your-url-id \\
-  -H "Authorization: Bearer gup_your_api_key_here"`}
-                      </pre>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold mb-2">Create API Key (Session Auth)</h4>
-                    <div className="bg-muted rounded-lg p-4 overflow-x-auto">
-                      <pre className="text-sm">
-{`curl -X POST https://url.gameup.dev/api/api-keys \\
-  -H "Content-Type: application/json" \\
-  -H "Cookie: your-session-cookie" \\
-  -d '{
-    "name": "Integration Key",
-    "scopes": ["read", "write"],
-    "expiresAt": "2024-12-31T23:59:59.000Z"
-  }'`}
-                      </pre>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        {/* Quick Tips */}
-        <Card className="mt-12">
-          <CardHeader>
-            <CardTitle>Quick Tips</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-2 text-sm">
-              <li>• Always handle API errors gracefully with try-catch blocks</li>
-              <li>• Use pagination for large datasets to avoid timeouts</li>
-              <li>• Store API keys securely using environment variables</li>
-              <li>• Implement retry logic for network failures</li>
-              <li>• Monitor your API usage to stay within rate limits</li>
-              <li>• Use appropriate scopes for your API keys (read vs write)</li>
-            </ul>
-          </CardContent>
-        </Card>
-
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-12 pt-8 border-t">
-          <Button variant="ghost" asChild>
-            <Link href="/docs">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Documentation
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link href="/dashboard/settings?tab=security">
-              Create API Key
-            </Link>
-          </Button>
+}`}
+            />
+          </div>
         </div>
-      </div>
-    </div>
+      </DocsSection>
+
+      {/* cURL Examples */}
+      <DocsSection
+        title="cURL Examples"
+        description="Direct HTTP API integration with shell scripts and automation"
+      >
+        <div className="space-y-8">
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Basic URL Shortening</h3>
+            <CodeBlock
+              language="bash"
+              code={`# Simple URL shortening
+curl -X POST https://url.gameup.dev/api/shorten \\
+  -H "Content-Type: application/json" \\
+  -d '{"url": "https://example.com"}'
+
+# With custom alias and authentication
+curl -X POST https://url.gameup.dev/api/shorten \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "url": "https://example.com",
+    "alias": "my-link",
+    "title": "My Custom Link"
+  }'`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Bash Script with Error Handling</h3>
+            <CodeBlock
+              language="bash"
+              code={`#!/bin/bash
+
+API_KEY="your-api-key-here"
+BASE_URL="https://url.gameup.dev/api"
+
+# Function to create short URL
+create_short_url() {
+    local url="$1"
+    local alias="$2"
+    local title="$3"
+    
+    local data="{\\"url\\": \\"$url\\""
+    
+    if [ -n "$alias" ]; then
+        data="$data, \\"alias\\": \\"$alias\\""
+    fi
+    
+    if [ -n "$title" ]; then
+        data="$data, \\"title\\": \\"$title\\""
+    fi
+    
+    data="$data}"
+    
+    response=$(curl -s -w "\\n%{http_code}" -X POST "$BASE_URL/shorten" \\
+        -H "Authorization: Bearer $API_KEY" \\
+        -H "Content-Type: application/json" \\
+        -d "$data")
+    
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | head -n -1)
+    
+    if [ "$http_code" -eq 201 ]; then
+        echo "Success: $(echo "$body" | jq -r '.data.shortUrl')"
+        return 0
+    else
+        echo "Error ($http_code): $(echo "$body" | jq -r '.message // .error')"
+        return 1
+    fi
+}
+
+# Function to get analytics
+get_analytics() {
+    local short_code="$1"
+    local period="$2"
+    if [ -z "$period" ]; then
+        period="30d"
+    fi
+    
+    response=$(curl -s -w "\\n%{http_code}" \\
+        -H "Authorization: Bearer $API_KEY" \\
+        "$BASE_URL/analytics/$short_code?period=$period")
+    
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | head -n -1)
+    
+    if [ "$http_code" -eq 200 ]; then
+        echo "Analytics for $short_code:"
+        echo "$body" | jq '.data'
+        return 0
+    else
+        echo "Error ($http_code): $(echo "$body" | jq -r '.message // .error')"
+        return 1
+    fi
+}
+
+# Usage examples
+echo "Creating short URL..."
+create_short_url "https://example.com" "bash-example" "Bash Script Example"
+
+echo "\\nGetting analytics..."
+get_analytics "bash-example"`}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold mb-4">Bulk Operations Script</h3>
+            <CodeBlock
+              language="bash"
+              code={`#!/bin/bash
+
+API_KEY="your-api-key-here"
+BASE_URL="https://url.gameup.dev/api"
+
+# Function to bulk create URLs from file
+bulk_create_from_file() {
+    local file="$1"
+    
+    if [ ! -f "$file" ]; then
+        echo "File not found: $file"
+        return 1
+    fi
+    
+    # Build JSON array from file
+    local urls_json="[]"
+    while IFS=',' read -r url title alias; do
+        # Skip header line
+        if [ "$url" = "url" ]; then
+            continue
+        fi
+        
+        local url_obj="{\\"url\\": \\"$url\\""
+        if [ -n "$title" ] && [ "$title" != "" ]; then
+            url_obj="$url_obj, \\"title\\": \\"$title\\""
+        fi
+        if [ -n "$alias" ] && [ "$alias" != "" ]; then
+            url_obj="$url_obj, \\"alias\\": \\"$alias\\""
+        fi
+        url_obj="$url_obj}"
+        
+        urls_json=$(echo "$urls_json" | jq ". + [$url_obj]")
+    done < "$file"
+    
+    local data="{\\"urls\\": $urls_json}"
+    
+    response=$(curl -s -w "\\n%{http_code}" -X POST "$BASE_URL/shorten/bulk" \\
+        -H "Authorization: Bearer $API_KEY" \\
+        -H "Content-Type: application/json" \\
+        -d "$data")
+    
+    http_code=$(echo "$response" | tail -n1)
+    body=$(echo "$response" | head -n -1)
+    
+    if [ "$http_code" -eq 201 ]; then
+        echo "Bulk creation completed:"
+        echo "$body" | jq '.data | "Total: \\(.total), Successful: \\(.successful), Failed: \\(.failed)"'
+        
+        # Show results
+        echo "\\nResults:"
+        echo "$body" | jq -r '.data.results[] | if .success then "✓ \\(.data.shortUrl)" else "✗ \\(.error): \\(.originalUrl)" end'
+        return 0
+    else
+        echo "Error ($http_code): $(echo "$body" | jq -r '.message // .error')"
+        return 1
+    fi
+}
+
+# Create sample CSV file
+cat > urls.csv << EOF
+url,title,alias
+https://example.com/page1,Page 1,page1
+https://example.com/page2,Page 2,page2
+https://example.com/page3,Page 3,
+EOF
+
+echo "Bulk creating URLs from CSV file..."
+bulk_create_from_file "urls.csv"`}
+            />
+          </div>
+        </div>
+      </DocsSection>
+    </DocsPage>
   )
 }
 

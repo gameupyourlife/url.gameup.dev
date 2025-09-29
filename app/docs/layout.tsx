@@ -11,14 +11,11 @@ import {
     Code2,
     Database,
     Shield,
-    Zap,
     BarChart3,
     QrCode,
-    Globe,
-    Settings,
-    FileText,
-    HelpCircle,
-    ExternalLink
+    Key,
+    User,
+    Link2,
 } from 'lucide-react'
 
 interface DocsLayoutProps {
@@ -39,34 +36,17 @@ const navigation = [
     items: [
       { title: 'API Overview', href: '/docs/api-reference', icon: Code2 },
       { title: 'URL Management', href: '/docs/api-reference/urls', icon: Database },
-      { title: 'Analytics', href: '/docs/api-reference/analytics', icon: BarChart3 },
+      { title: 'Simple Shorten', href: '/docs/api-reference/shorten', icon: Link2 },
       { title: 'QR Codes', href: '/docs/api-reference/qr-codes', icon: QrCode },
-      { title: 'Webhooks', href: '/docs/api-reference/webhooks', icon: Settings },
-    ]
-  },
-  {
-    title: 'Features',
-    items: [
-      { title: 'Custom Domains', href: '/docs/features/custom-domains', icon: Globe },
-      { title: 'Advanced Analytics', href: '/docs/features/analytics', icon: BarChart3 },
-      { title: 'Team Management', href: '/docs/features/teams', icon: Settings },
-      { title: 'Export & Reports', href: '/docs/features/exports', icon: FileText },
+      { title: 'Analytics', href: '/docs/api-reference/analytics', icon: BarChart3 },
+      { title: 'Profile', href: '/docs/api-reference/profile', icon: User },
+      { title: 'API Keys', href: '/docs/api-reference/api-keys', icon: Key },
     ]
   },
   {
     title: 'Examples',
     items: [
       { title: 'Code Examples', href: '/docs/examples', icon: Code2 },
-      { title: 'SDKs & Libraries', href: '/docs/examples/sdks', icon: Database },
-      { title: 'Integrations', href: '/docs/examples/integrations', icon: ExternalLink },
-    ]
-  },
-  {
-    title: 'Help & Support',
-    items: [
-      { title: 'FAQ', href: '/docs/faq', icon: HelpCircle },
-      { title: 'Troubleshooting', href: '/docs/troubleshooting', icon: Settings },
-      { title: 'Rate Limits', href: '/docs/rate-limits', icon: Zap },
     ]
   }
 ]
