@@ -54,7 +54,16 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
 
     // Get comprehensive analytics for chart data
     const { data: { user } } = await supabase.auth.getUser()
-    let analytics: any = null
+    let analytics: {
+      topCountries: { country: string; clicks: number }[];
+      topBrowsers: { browser: string; clicks: number }[];
+      clicksByDay: { date: string; mobile: number; desktop: number; tablet: number; unknown: number; total: number }[];
+      recentClicks: { clickedAt: string; country: string; isBot: boolean }[];
+      topLanguages: { language: string; clicks: number }[];
+      referrerTypes: { type: string; clicks: number }[];
+      referrerDomains: { domain: string; clicks: number }[];
+      referrerSources: { source: string; clicks: number }[];
+    } | null = null
     
     if (user) {
         analytics = await getUrlAnalytics(id, user.id)
@@ -83,7 +92,7 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
     }, [] as { code: string; name: string; count: number }[])
 
     // Use real analytics data if available, fallback to current data
-    const topCountries = analytics?.topCountries.map((c: any) => ({ 
+    const topCountries = analytics?.topCountries.map((c) => ({ 
         name: c.country, 
         clicks: c.clicks 
     })) || countryData
@@ -92,23 +101,23 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
         .map(c => ({ name: c.name, clicks: c.count }))
 
     // Use real browser data from analytics
-    const topBrowsers = analytics?.topBrowsers.map((b: any) => ({ 
+    const topBrowsers = analytics?.topBrowsers.map((b) => ({ 
         name: b.browser, 
         clicks: b.clicks 
     })) || []
 
     // Extract device data from analytics clicksByDay data
     const topDevices = analytics ? (() => {
-        const deviceTotals = analytics.clicksByDay.reduce((acc: any, day: any) => {
+        const deviceTotals = analytics.clicksByDay.reduce((acc: Record<string, number>, day) => {
             acc.mobile = (acc.mobile || 0) + day.mobile
             acc.desktop = (acc.desktop || 0) + day.desktop
             acc.tablet = (acc.tablet || 0) + day.tablet
             acc.unknown = (acc.unknown || 0) + day.unknown
             return acc
-        }, {})
+        }, {} as Record<string, number>)
         
         return Object.entries(deviceTotals)
-            .filter(([_, clicks]) => (clicks as number) > 0)
+            .filter(([, clicks]) => (clicks as number) > 0)
             .map(([device, clicks]) => ({ 
                 name: device.charAt(0).toUpperCase() + device.slice(1), 
                 clicks: clicks as number 
@@ -117,7 +126,7 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
     })() : []
 
     // Use real recent clicks data
-    const recentClicks = analytics?.recentClicks.map((click: any) => ({
+    const recentClicks = analytics?.recentClicks.map((click) => ({
         id: `${click.clickedAt}-${Math.random()}`, // Generate unique ID
         clickedAt: click.clickedAt,
         countryCode: null, // Analytics service doesn't provide country code
@@ -135,23 +144,23 @@ export default async function LinkAnalyticsPage({ params }: LinkAnalyticsPagePro
     const clicksByDay = analytics?.clicksByDay || []
 
     // Use real language data from analytics
-    const topLanguages = analytics?.topLanguages.map((l: any) => ({ 
+    const topLanguages = analytics?.topLanguages.map((l) => ({ 
         name: l.language, 
         clicks: l.clicks 
     })) || []
 
     // Use detailed referrer data from analytics
-    const referrerTypes = analytics?.referrerTypes.map((r: any) => ({ 
+    const referrerTypes = analytics?.referrerTypes.map((r) => ({ 
         name: r.type, 
         clicks: r.clicks 
     })) || []
 
-    const referrerDomains = analytics?.referrerDomains.map((r: any) => ({ 
+    const referrerDomains = analytics?.referrerDomains.map((r) => ({ 
         name: r.domain, 
         clicks: r.clicks 
     })) || []
 
-    const referrerSources = analytics?.referrerSources.map((r: any) => ({ 
+    const referrerSources = analytics?.referrerSources.map((r) => ({ 
         name: r.source, 
         clicks: r.clicks 
     })) || []

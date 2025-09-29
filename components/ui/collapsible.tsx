@@ -47,9 +47,7 @@ const Collapsible = React.forwardRef<HTMLDivElement, CollapsibleProps>(
 )
 Collapsible.displayName = 'Collapsible'
 
-interface CollapsibleTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
-
-const CollapsibleTrigger = React.forwardRef<HTMLButtonElement, CollapsibleTriggerProps>(
+const CollapsibleTrigger = React.forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
   ({ onClick, ...props }, ref) => {
     const context = React.useContext(CollapsibleContext)
     
@@ -67,9 +65,7 @@ const CollapsibleTrigger = React.forwardRef<HTMLButtonElement, CollapsibleTrigge
 )
 CollapsibleTrigger.displayName = 'CollapsibleTrigger'
 
-interface CollapsibleContentProps extends React.HTMLAttributes<HTMLDivElement> {}
-
-const CollapsibleContent = React.forwardRef<HTMLDivElement, CollapsibleContentProps>(
+const CollapsibleContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     const context = React.useContext(CollapsibleContext)
     

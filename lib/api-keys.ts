@@ -8,7 +8,7 @@ import { createServerClient, Database } from '@/lib/supabase'
 
 // Database row types
 type ApiKeyRow = Database['public']['Tables']['api_keys']['Row']
-type ApiKeyInsert = Database['public']['Tables']['api_keys']['Insert']
+// type ApiKeyInsert = Database['public']['Tables']['api_keys']['Insert'] // Unused
 
 export interface ApiKeyData {
   id: string
@@ -129,7 +129,7 @@ export async function createApiKey(
     const { token, hash, prefix } = generateApiKey()
     
     // Validate expiration date if provided
-    let expiresAt = request.expires_at
+    const expiresAt = request.expires_at
     if (expiresAt) {
       const expDate = new Date(expiresAt)
       const now = new Date()
@@ -469,7 +469,7 @@ export async function getApiKeyUsageStats(
         .from('api_keys')
         .select('id')
         .eq('user_id', userId)
-      apiKeyIds = (keys || []).map((k: any) => k.id)
+      apiKeyIds = (keys || []).map((k: { id: string }) => k.id)
     }
     
     const { data: usage, error } = await supabase

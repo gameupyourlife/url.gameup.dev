@@ -386,7 +386,7 @@ $campaign = createEmailCampaign($emailList, "https://yoursite.com/special-offer"
           <div className="text-center">
             <h4 className="text-lg font-semibold mb-2">Get Support</h4>
             <p className="text-muted-foreground mb-4">
-              Have questions or need help with your integration? We're here to help!
+              Have questions or need help with your integration? We&apos;re here to help!
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Button asChild>

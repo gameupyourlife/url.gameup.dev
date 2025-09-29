@@ -12,7 +12,7 @@ export async function POST(
     const auth = await authenticateRequest(request)
     
     if (auth.error || !auth.user) {
-      return auth.error
+      return auth.error || createErrorResponse('Authentication failed', 401)
     }
 
     // Only session users can revoke API keys

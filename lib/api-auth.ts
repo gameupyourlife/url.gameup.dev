@@ -10,7 +10,7 @@ import { validateApiKey, hasScope, logApiKeyUsage, type ApiKeyScope } from '@/li
 export interface AuthenticatedUser {
   id: string
   email?: string
-  user_metadata?: Record<string, any>
+  user_metadata?: Record<string, unknown>
 }
 
 export interface ApiKeyAuth {
@@ -32,13 +32,13 @@ export interface APIError {
   errors?: Record<string, string>
 }
 
-export interface APISuccess<T = any> {
+export interface APISuccess<T = unknown> {
   success: true
   data?: T
   message?: string
 }
 
-export type APIResponse<T = any> = APISuccess<T> | APIError
+export type APIResponse<T = unknown> = APISuccess<T> | APIError
 
 /**
  * Authenticate API request and return user if valid
@@ -427,7 +427,7 @@ export function createRateLimitHeaders(result: RateLimitResult): Record<string, 
 /**
  * Rate limiting middleware that can be applied to API routes
  */
-export async function withRateLimit<T extends any[]>(
+export async function withRateLimit<T extends unknown[]>(
   request: NextRequest,
   rateLimitType: keyof typeof DEFAULT_RATE_LIMITS,
   handler: (request: NextRequest, ...args: T) => Promise<NextResponse | null>,

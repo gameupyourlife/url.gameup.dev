@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
     const auth = await authenticateWithScope(request, 'read')
     
     if (auth.error || !auth.user) {
-      return auth.error
+      return auth.error || NextResponse.json({ success: false, error: 'Authentication failed' }, { status: 401 })
     }
 
     // Get user profile

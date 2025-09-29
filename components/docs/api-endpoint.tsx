@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+// import { Button } from '@/components/ui/button' // Removed unused import
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Separator } from '@/components/ui/separator'
 import { ChevronDown, ChevronRight, Info, AlertTriangle, CheckCircle } from 'lucide-react'
@@ -176,15 +176,13 @@ export function ApiEndpoint({
             open={expandedSections.parameters}
             onOpenChange={() => toggleSection('parameters')}
           >
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full justify-between p-0 h-auto">
-                <h3 className="text-lg font-semibold">Parameters</h3>
-                {expandedSections.parameters ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </Button>
+            <CollapsibleTrigger className="w-full justify-between p-0 h-auto bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 border-none">
+              <h3 className="text-lg font-semibold">Parameters</h3>
+              {expandedSections.parameters ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 mt-4">
               <div className="space-y-3">
@@ -231,15 +229,13 @@ export function ApiEndpoint({
             open={expandedSections.requestBody}
             onOpenChange={() => toggleSection('requestBody')}
           >
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full justify-between p-0 h-auto">
-                <h3 className="text-lg font-semibold">Request Body</h3>
-                {expandedSections.requestBody ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </Button>
+            <CollapsibleTrigger className="w-full justify-between p-0 h-auto bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 border-none">
+              <h3 className="text-lg font-semibold">Request Body</h3>
+              {expandedSections.requestBody ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-4 mt-4">
               <p className="text-sm text-muted-foreground">{requestBody.description}</p>
@@ -257,15 +253,13 @@ export function ApiEndpoint({
           open={expandedSections.responses}
           onOpenChange={() => toggleSection('responses')}
         >
-          <CollapsibleTrigger asChild>
-            <Button variant="ghost" className="w-full justify-between p-0 h-auto">
-              <h3 className="text-lg font-semibold">Responses</h3>
-              {expandedSections.responses ? (
-                <ChevronDown className="h-4 w-4" />
-              ) : (
-                <ChevronRight className="h-4 w-4" />
-              )}
-            </Button>
+          <CollapsibleTrigger className="w-full justify-between p-0 h-auto bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 border-none">
+            <h3 className="text-lg font-semibold">Responses</h3>
+            {expandedSections.responses ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-4 mt-4">
             {responses.map((response, index) => (
@@ -295,15 +289,13 @@ export function ApiEndpoint({
             open={expandedSections.examples}
             onOpenChange={() => toggleSection('examples')}
           >
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" className="w-full justify-between p-0 h-auto">
-                <h3 className="text-lg font-semibold">Examples</h3>
-                {expandedSections.examples ? (
-                  <ChevronDown className="h-4 w-4" />
-                ) : (
-                  <ChevronRight className="h-4 w-4" />
-                )}
-              </Button>
+            <CollapsibleTrigger className="w-full justify-between p-0 h-auto bg-transparent hover:bg-gray-50 dark:hover:bg-gray-800 border-none">
+              <h3 className="text-lg font-semibold">Examples</h3>
+              {expandedSections.examples ? (
+                <ChevronDown className="h-4 w-4" />
+              ) : (
+                <ChevronRight className="h-4 w-4" />
+              )}
             </CollapsibleTrigger>
             <CollapsibleContent className="space-y-6 mt-4">
               {examples.map((example, index) => (

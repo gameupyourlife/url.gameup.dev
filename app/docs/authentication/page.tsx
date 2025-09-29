@@ -73,7 +73,7 @@ API_KEY="your-api-key-here"`
           <div>
             <h3 className="text-xl font-semibold mb-4">Getting Your API Key</h3>
             <p className="text-muted-foreground mb-4">
-              To get started with authenticated requests, you'll need to create an API key from your dashboard:
+              To get started with authenticated requests, you&apos;ll need to create an API key from your dashboard:
             </p>
             <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-4">
               <div className="flex">
@@ -151,11 +151,13 @@ curl -X POST https://url.gameup.dev/api/shorten \\
     
     switch (response.status) {
       case 401:
-        throw new Error('Invalid API key or unauthorized access');
+        throw new Error(&apos;Invalid API key or unauthorized access&apos;);
       case 403:
         throw new Error('Insufficient permissions for this operation');
       case 429:
-        throw new Error('Rate limit exceeded. Please try again later');
+        throw new Error(&apos;The provided URL is not valid&apos;);
+          case &apos;RATE_LIMIT_EXCEEDED&apos;:
+            throw new Error(&apos;Rate limit exceeded. Please try again later&apos;);
       default:
         throw new Error(errorData.message || \`HTTP \${response.status}: \${response.statusText}\`);
     }
@@ -327,7 +329,7 @@ curl -X POST https://url.gameup.dev/api/shorten/validate \\
                 <div className="flex">
                   <AlertTriangle className="h-5 w-5 text-red-600 mt-0.5 mr-3" />
                   <div>
-                    <p className="font-medium text-red-800">❌ Don't</p>
+                    <p className="font-medium text-red-800">❌ Don&apos;t</p>
                     <ul className="text-sm text-red-700 mt-2 space-y-1">
                       <li>• Commit keys to version control</li>
                       <li>• Expose keys in client-side code</li>
@@ -476,15 +478,15 @@ const client = new URLShortenerClient({
             <p className="text-muted-foreground mb-4">Your API key is invalid or missing.</p>
             <div className="space-y-2 text-sm">
               <p>• Check that your API key is correctly set in the Authorization header</p>
-              <p>• Verify the key hasn't been revoked or expired</p>
-              <p>• Ensure you're using the Bearer token format: <code className="px-1 py-0.5 bg-gray-100 rounded">Bearer YOUR_KEY</code></p>
+              <p>• Verify the key hasn&apos;t been revoked or expired</p>
+              <p>• Ensure you&apos;re using the Bearer token format: <code className="px-1 py-0.5 bg-gray-100 rounded">Bearer YOUR_KEY</code></p>
               <p>• Generate a new API key from your dashboard if needed</p>
             </div>
           </div>
 
           <div className="border rounded-lg p-6">
             <h4 className="text-lg font-semibold mb-3">403 Forbidden</h4>
-            <p className="text-muted-foreground mb-4">Your API key doesn't have permission for this operation.</p>
+            <p className="text-muted-foreground mb-4">Your API key doesn&apos;t have permission for this operation.</p>
             <div className="space-y-2 text-sm">
               <p>• Check your subscription plan limits</p>
               <p>• Verify the API key has the required scopes</p>
@@ -495,7 +497,7 @@ const client = new URLShortenerClient({
 
           <div className="border rounded-lg p-6">
             <h4 className="text-lg font-semibold mb-3">429 Too Many Requests</h4>
-            <p className="text-muted-foreground mb-4">You've exceeded the rate limit for your plan.</p>
+            <p className="text-muted-foreground mb-4">You&apos;ve exceeded the rate limit for your plan.</p>
             <div className="space-y-2 text-sm">
               <p>• Implement exponential backoff in your retry logic</p>
               <p>• Check the <code className="px-1 py-0.5 bg-gray-100 rounded">X-RateLimit-Reset</code> header for retry timing</p>

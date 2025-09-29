@@ -45,7 +45,7 @@ interface AnalyticsChartsProps {
 }
 
 export function AnalyticsCharts({
-    countryData,
+    countryData: _countryData,
     totalClicks,
     botClicks,
     className = ''
@@ -59,120 +59,120 @@ export function AnalyticsCharts({
     const trafficColors = getTrafficColors(isDark)
 
     // Prepare data for country bar chart
-    const topCountries = countryData
-        .filter(c => c.count > 0)
-        .sort((a, b) => b.count - a.count)
-        .slice(0, 8)
+    // const topCountries = countryData
+    //     .filter(c => c.count > 0)
+    //     .sort((a, b) => b.count - a.count)
+    //     .slice(0, 8)
 
-    const countryChartData = {
-        labels: topCountries.map(c => c.name.length > 15 ? c.name.substring(0, 15) + '...' : c.name),
-        datasets: [
-            {
-                label: 'Clicks',
-                data: topCountries.map(c => c.count),
-                backgroundColor: colors.primary,
-                borderColor: colors.primary,
-                borderWidth: 0,
-                borderRadius: 4,
-            },
-        ],
-    }
+    // const countryChartData = {
+    //     labels: topCountries.map(c => c.name.length > 15 ? c.name.substring(0, 15) + '...' : c.name),
+    //     datasets: [
+    //         {
+    //             label: 'Clicks',
+    //             data: topCountries.map(c => c.count),
+    //             backgroundColor: colors.primary,
+    //             borderColor: colors.primary,
+    //             borderWidth: 0,
+    //             borderRadius: 4,
+    //         },
+    //     ],
+    // }
 
-    const countryChartOptions: ChartOptions<'bar'> = {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-            intersect: false,
-            mode: 'index',
-        },
-        animation: {
-            duration: 1000,
-            easing: 'easeInOutQuart',
-        },
-        plugins: {
-            legend: {
-                display: false,
-            },
-            title: {
-                display: true,
-                text: 'Top Countries by Clicks',
-                color: colors.text,
-                font: {
-                    size: 18,
-                    weight: 'bold',
-                    family: 'Inter, system-ui, sans-serif',
-                },
-                padding: {
-                    top: 0,
-                    bottom: 30,
-                },
-            },
-            tooltip: {
-                backgroundColor: colors.background,
-                titleColor: colors.text,
-                bodyColor: colors.text,
-                borderColor: colors.border,
-                borderWidth: 1,
-                cornerRadius: 12,
-                padding: 16,
-                displayColors: false,
-                titleFont: {
-                    size: 14,
-                    weight: 'bold',
-                },
-                bodyFont: {
-                    size: 13,
-                },
-                callbacks: {
-                    title: function (context) {
-                        return context[0].label
-                    },
-                    label: function (context) {
-                        const percentage = totalClicks > 0 ? ((context.parsed.y / totalClicks) * 100).toFixed(1) : '0'
-                        return `${context.parsed.y} clicks (${percentage}%)`
-                    },
-                },
-            },
-        },
-        scales: {
-            x: {
-                grid: {
-                    display: false,
-                },
-                ticks: {
-                    color: colors.textMuted,
-                    font: {
-                        size: 12,
-                        weight: 'normal',
-                    },
-                    maxRotation: 45,
-                },
-                border: {
-                    display: false,
-                },
-            },
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: colors.border,
-                    lineWidth: 1,
-                },
-                ticks: {
-                    color: colors.textMuted,
-                    font: {
-                        size: 12,
-                    },
-                    stepSize: 1,
-                    callback: function (tickValue) {
-                        return Number(tickValue).toLocaleString()
-                    },
-                },
-                border: {
-                    display: false,
-                },
-            },
-        },
-    }
+    // const countryChartOptions: ChartOptions<'bar'> = {
+    //     responsive: true,
+    //     maintainAspectRatio: false,
+    //     interaction: {
+    //         intersect: false,
+    //         mode: 'index',
+    //     },
+    //     animation: {
+    //         duration: 1000,
+    //         easing: 'easeInOutQuart',
+    //     },
+    //     plugins: {
+    //         legend: {
+    //             display: false,
+    //         },
+    //         title: {
+    //             display: true,
+    //             text: 'Top Countries by Clicks',
+    //             color: colors.text,
+    //             font: {
+    //                 size: 18,
+    //                 weight: 'bold',
+    //                 family: 'Inter, system-ui, sans-serif',
+    //             },
+    //             padding: {
+    //                 top: 0,
+    //                 bottom: 30,
+    //             },
+    //         },
+    //         tooltip: {
+    //             backgroundColor: colors.background,
+    //             titleColor: colors.text,
+    //             bodyColor: colors.text,
+    //             borderColor: colors.border,
+    //             borderWidth: 1,
+    //             cornerRadius: 12,
+    //             padding: 16,
+    //             displayColors: false,
+    //             titleFont: {
+    //                 size: 14,
+    //                 weight: 'bold',
+    //             },
+    //             bodyFont: {
+    //                 size: 13,
+    //             },
+    //             callbacks: {
+    //                 title: function (context) {
+    //                     return context[0].label
+    //                 },
+    //                 label: function (context) {
+    //                     const percentage = totalClicks > 0 ? ((context.parsed.y / totalClicks) * 100).toFixed(1) : '0'
+    //                     return `${context.parsed.y} clicks (${percentage}%)`
+    //                 },
+    //             },
+    //         },
+    //     },
+    //     scales: {
+    //         x: {
+    //             grid: {
+    //                 display: false,
+    //             },
+    //             ticks: {
+    //                 color: colors.textMuted,
+    //                 font: {
+    //                     size: 12,
+    //                     weight: 'normal',
+    //                 },
+    //                 maxRotation: 45,
+    //             },
+    //             border: {
+    //                 display: false,
+    //             },
+    //         },
+    //         y: {
+    //             beginAtZero: true,
+    //             grid: {
+    //                 color: colors.border,
+    //                 lineWidth: 1,
+    //             },
+    //             ticks: {
+    //                 color: colors.textMuted,
+    //                 font: {
+    //                     size: 12,
+    //                 },
+    //                 stepSize: 1,
+    //                 callback: function (tickValue) {
+    //                     return Number(tickValue).toLocaleString()
+    //                 },
+    //             },
+    //             border: {
+    //                 display: false,
+    //             },
+    //         },
+    //     },
+    // }
 
     // Traffic Quality Data
     const trafficData = {

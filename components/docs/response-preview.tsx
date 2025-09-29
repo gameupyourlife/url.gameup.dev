@@ -25,7 +25,7 @@ export function ResponsePreview({ responses, className }: ResponsePreviewProps) 
   const [selectedResponse, setSelectedResponse] = useState(responses[0]?.status || 200)
   const [viewMode, setViewMode] = useState<'formatted' | 'raw'>('formatted')
 
-  const currentResponse = responses.find(r => r.status === selectedResponse) || responses[0]
+  // const currentResponse = responses.find(r => r.status === selectedResponse) || responses[0]
 
   const formatJson = (data: object | string) => {
     if (typeof data === 'string') {
@@ -43,8 +43,8 @@ export function ResponsePreview({ responses, className }: ResponsePreviewProps) 
       return <div className="font-mono text-sm whitespace-pre-wrap">{data}</div>
     }
 
-    const renderValue = (value: any, key?: string, depth = 0): React.ReactElement => {
-      const indent = '  '.repeat(depth)
+    const renderValue = (value: unknown, key?: string, depth = 0): React.ReactElement => {
+      // const indent = '  '.repeat(depth)
       
       if (value === null) {
         return <span className="text-gray-500">null</span>
@@ -59,7 +59,7 @@ export function ResponsePreview({ responses, className }: ResponsePreviewProps) 
       }
       
       if (typeof value === 'string') {
-        return <span className="text-orange-600">"{value}"</span>
+        return <span className="text-orange-600">&quot;{value}&quot;</span>
       }
       
       if (Array.isArray(value)) {
@@ -92,7 +92,7 @@ export function ResponsePreview({ responses, className }: ResponsePreviewProps) 
             <span className="text-gray-500">{'{'}</span>
             {entries.map(([k, v], index) => (
               <div key={k} className="ml-4">
-                <span className="text-purple-600">"{k}"</span>
+                <span className="text-purple-600">&quot;{k}&quot;</span>
                 <span className="text-gray-500">: </span>
                 {renderValue(v, k, depth + 1)}
                 {index < entries.length - 1 && <span className="text-gray-500">,</span>}
