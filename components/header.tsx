@@ -29,6 +29,14 @@ export function Header() {
             {/* Navigation Links */}
             <nav className="hidden md:flex items-center space-x-6">
               <Link 
+                href="/docs" 
+                className={`text-sm font-medium transition-colors hover:text-primary ${
+                  pathname.startsWith('/docs') ? 'text-primary' : 'text-muted-foreground'
+                }`}
+              >
+                API Docs
+              </Link>
+              <Link 
                 href="/pricing" 
                 className={`text-sm font-medium transition-colors hover:text-primary ${
                   pathname === '/pricing' ? 'text-primary' : 'text-muted-foreground'
@@ -41,6 +49,14 @@ export function Header() {
           
           {/* Mobile Navigation */}
           <div className="md:hidden flex items-center space-x-4">
+            <Link 
+              href="/docs" 
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname.startsWith('/docs') ? 'text-primary' : 'text-muted-foreground'
+              }`}
+            >
+              API Docs
+            </Link>
             <Link 
               href="/pricing" 
               className={`text-sm font-medium transition-colors hover:text-primary ${

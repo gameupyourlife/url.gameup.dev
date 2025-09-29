@@ -38,6 +38,16 @@ export function Footer() {
                 </Link>
               </li>
               <li>
+                <Link href="/docs" className="text-muted-foreground hover:text-foreground transition-colors">
+                  API Documentation
+                </Link>
+              </li>
+              <li>
+                <Link href="/docs/getting-started" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Getting Started
+                </Link>
+              </li>
+              <li>
                 <Link href="/auth" className="text-muted-foreground hover:text-foreground transition-colors">
                   Sign In
                 </Link>

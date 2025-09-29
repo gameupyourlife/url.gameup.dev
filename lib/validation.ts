@@ -181,3 +181,30 @@ export function formatValidationErrors(error: z.ZodError): Record<string, string
   
   return errors
 }
+
+// QR Code generation schema
+export const qrCodeOptionsSchema = z.object({
+  // Size of the QR code (in pixels)
+  size: z.number().int().min(100).max(2000).optional().default(256),
+  
+  // Format of the output (PNG, SVG, or DataURL)
+  format: z.enum(['png', 'svg', 'dataurl']).optional().default('png'),
+  
+  // Error correction level
+  errorCorrectionLevel: z.enum(['L', 'M', 'Q', 'H']).optional().default('M'),
+  
+  // Margin around the QR code
+  margin: z.number().int().min(0).max(20).optional().default(4),
+  
+  // Colors
+  foregroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().default('#000000'),
+  backgroundColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional().default('#FFFFFF'),
+  
+  // Whether to download the QR code as attachment
+  download: z.boolean().optional().default(false),
+  
+  // Custom filename (for download)
+  filename: z.string().min(1).max(100).optional()
+})
+
+export type QRCodeOptions = z.infer<typeof qrCodeOptionsSchema>

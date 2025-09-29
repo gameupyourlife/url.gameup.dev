@@ -48,6 +48,79 @@ export type Database = {
           is_active?: boolean
         }
       }
+      api_keys: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          key_hash: string
+          key_prefix: string
+          scopes: string[]
+          is_active: boolean
+          last_used_at: string | null
+          expires_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          key_hash: string
+          key_prefix: string
+          scopes?: string[]
+          is_active?: boolean
+          last_used_at?: string | null
+          expires_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          name?: string
+          key_hash?: string
+          key_prefix?: string
+          scopes?: string[]
+          is_active?: boolean
+          last_used_at?: string | null
+          expires_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      api_key_usage: {
+        Row: {
+          id: string
+          api_key_id: string
+          endpoint: string
+          method: string
+          ip_address: string | null
+          user_agent: string | null
+          response_status: number | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          api_key_id: string
+          endpoint: string
+          method: string
+          ip_address?: string | null
+          user_agent?: string | null
+          response_status?: number | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          api_key_id?: string
+          endpoint?: string
+          method?: string
+          ip_address?: string | null
+          user_agent?: string | null
+          response_status?: number | null
+          created_at?: string
+        }
+      }
       profiles: {
         Row: {
           id: string

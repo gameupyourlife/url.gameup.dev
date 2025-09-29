@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ProfileForm } from '@/components/profile-form'
 import { PlanManagement } from '@/components/plan-management'
+import { ApiKeyManagement } from '@/components/api-key-management'
 import { User, CreditCard, Shield, Bell, Key, Mail } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
@@ -170,6 +171,9 @@ export default function SettingsPage() {
               </div>
             </CardContent>
           </Card>
+
+          {/* API Key Management */}
+          <ApiKeyManagement />
         </TabsContent>
 
         {/* Notifications Tab */}
