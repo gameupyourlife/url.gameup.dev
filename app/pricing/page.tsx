@@ -41,13 +41,13 @@ export default function PricingPage() {
       features: [
         { text: "5,000 URLs per month", included: true },
         { text: "Advanced analytics", included: true },
-        { text: "Custom domains", included: true },
+        { text: "Custom domains (Planned)", included: true },
         { text: "Unlimited link history", included: true },
         { text: "Priority support", included: true },
         { text: "API access", included: true },
-        { text: "Team collaboration (5 members)", included: true },
-        { text: "Custom branding", included: true },
-        { text: "Bulk URL creation", included: false },
+        { text: "Team collaboration (5 members) (Planned)", included: true },
+        { text: "Custom branding (Planned)", included: true },
+        { text: "Bulk URL creation (Planned)", included: false },
       ]
     },
     {
@@ -60,13 +60,13 @@ export default function PricingPage() {
       features: [
         { text: "Unlimited URLs", included: true },
         { text: "Advanced analytics & reporting", included: true },
-        { text: "Multiple custom domains", included: true },
+        { text: "Multiple custom domains (Planned)", included: true },
         { text: "Unlimited link history", included: true },
         { text: "24/7 premium support", included: true },
         { text: "Full API access", included: true },
-        { text: "Unlimited team members", included: true },
-        { text: "White-label solution", included: true },
-        { text: "Bulk URL creation & management", included: true },
+        { text: "Unlimited team members (Planned)", included: true },
+        { text: "White-label solution (Planned)", included: true },
+        { text: "Bulk URL creation & management (Planned)", included: true },
       ]
     }
   ]
@@ -192,8 +192,8 @@ export default function PricingPage() {
                 <tr className="border-b border-border bg-muted/20">
                   <td className="p-4 font-medium">Custom Domains</td>
                   <td className="text-center p-4"><X className="w-4 h-4 text-muted-foreground mx-auto" /></td>
-                  <td className="text-center p-4"><Check className="w-4 h-4 text-green-600 mx-auto" /></td>
-                  <td className="text-center p-4"><Check className="w-4 h-4 text-green-600 mx-auto" /></td>
+                  <td className="text-center p-4"><span className="text-xs text-amber-600 font-medium">Planned</span></td>
+                  <td className="text-center p-4"><span className="text-xs text-amber-600 font-medium">Planned</span></td>
                 </tr>
                 <tr className="border-b border-border">
                   <td className="p-4 font-medium">Analytics</td>
@@ -210,8 +210,8 @@ export default function PricingPage() {
                 <tr className="border-b border-border">
                   <td className="p-4 font-medium">Team Members</td>
                   <td className="text-center p-4">1</td>
-                  <td className="text-center p-4">5</td>
-                  <td className="text-center p-4">Unlimited</td>
+                  <td className="text-center p-4"><span className="text-xs text-amber-600 font-medium">5 (Planned)</span></td>
+                  <td className="text-center p-4"><span className="text-xs text-amber-600 font-medium">Unlimited (Planned)</span></td>
                 </tr>
                 <tr className="bg-muted/20">
                   <td className="p-4 font-medium">Support</td>

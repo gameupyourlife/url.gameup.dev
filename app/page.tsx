@@ -2,6 +2,7 @@ import { ErrorHandler } from '@/components/error-handler'
 import { Button } from '@/components/ui/button'
 import { Suspense } from 'react'
 import Link from 'next/link'
+import { Badge } from '@/components/ui/badge'
 
 export default function Home() {
   return (
@@ -9,7 +10,7 @@ export default function Home() {
       <Suspense fallback={null}>
         <ErrorHandler />
       </Suspense>
-      
+
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16">
         <div className="text-center mb-16">
@@ -20,7 +21,7 @@ export default function Home() {
             </span>
             Now with advanced analytics
           </div>
-          
+
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
             <span className="bg-gradient-to-r from-foreground via-foreground to-muted-foreground bg-clip-text text-transparent">
               Shorten URLs.
@@ -30,12 +31,12 @@ export default function Home() {
               Amplify Results.
             </span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto mb-12 leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-500">
-            Transform long, complex URLs into short, shareable links. Get powerful analytics, 
+            Transform long, complex URLs into short, shareable links. Get powerful analytics,
             custom branding, and insights that drive your business forward.
           </p>
-          
+
           {/* Hero CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-700">
             <Link href="/auth/signup" className="inline-flex">
@@ -85,7 +86,7 @@ export default function Home() {
             <h3 className="text-3xl font-bold text-foreground mb-4">Trusted by Thousands</h3>
             <p className="text-muted-foreground">Join the growing community of users who trust our platform</p>
           </div>
-          
+
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="text-center">
               <div className="text-4xl md:text-5xl font-bold text-primary mb-2">250K+</div>
@@ -112,7 +113,7 @@ export default function Home() {
             <h3 className="text-3xl font-bold text-foreground mb-4">What Our Users Say</h3>
             <p className="text-muted-foreground">See how our URL shortener helps businesses grow</p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-md transition-shadow">
               <div className="flex items-center mb-4">
@@ -137,7 +138,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-md transition-shadow">
               <div className="flex items-center mb-4">
                 <div className="flex text-yellow-400">
@@ -161,7 +162,7 @@ export default function Home() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-md transition-shadow">
               <div className="flex items-center mb-4">
                 <div className="flex text-yellow-400">
@@ -215,7 +216,7 @@ export default function Home() {
                 </span>
               </div>
             </div>
-            
+
             <div className="group p-8 bg-card rounded-2xl shadow-sm border border-border hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-gradient-to-br from-green-500/20 to-green-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -233,7 +234,7 @@ export default function Home() {
                 </span>
               </div>
             </div>
-            
+
             <div className="group p-8 bg-card rounded-2xl shadow-sm border border-border hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500/20 to-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
                 <svg className="w-8 h-8 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,7 +259,12 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2a2 2 0 002-2V5a2 2 0 00-2-2z" />
                 </svg>
               </div>
-              <h4 className="text-xl font-semibold text-card-foreground mb-3 text-center">Custom Branding</h4>
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <h4 className="text-xl font-semibold text-card-foreground text-center">Custom Branding</h4>
+                <Badge className='mt-1' >
+                  Planned
+                </Badge>
+              </div>
               <p className="text-muted-foreground text-center leading-relaxed">
                 Create branded short links with custom domains and aliases. Build trust and recognition with every link you share.
               </p>
@@ -276,7 +282,12 @@ export default function Home() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
                 </svg>
               </div>
-              <h4 className="text-xl font-semibold text-card-foreground mb-3 text-center">Team Collaboration</h4>
+              <div className="flex items-center justify-center gap-2 mb-3">
+                <h4 className="text-xl font-semibold text-card-foreground text-center">Team Collaboration</h4>
+                <Badge className='mt-1' >
+                  Planned
+                </Badge>
+              </div>
               <p className="text-muted-foreground text-center leading-relaxed">
                 Share and manage links across your team. Role-based access, shared dashboards, and collaborative features included.
               </p>
@@ -321,7 +332,7 @@ export default function Home() {
             <div className="text-center group relative">
               {/* Step connector for desktop */}
               <div className="hidden md:block absolute top-10 left-full w-12 lg:w-16 h-0.5 bg-gradient-to-r from-primary to-pink-300 transform translate-x-4 lg:translate-x-8"></div>
-              
+
               <div className="relative mx-auto mb-6 inline-block">
                 <div className="w-20 h-20 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -341,7 +352,7 @@ export default function Home() {
             <div className="text-center group relative">
               {/* Step connector for desktop */}
               <div className="hidden md:block absolute top-10 left-full w-12 lg:w-16 h-0.5 bg-gradient-to-r from-pink-300 to-rose-300 transform translate-x-4 lg:translate-x-8"></div>
-              
+
               <div className="relative mx-auto mb-6 inline-block">
                 <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                   <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
